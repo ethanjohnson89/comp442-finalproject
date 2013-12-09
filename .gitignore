@@ -11,3 +11,4 @@ nbbuild/
 dist/
 nbdist/
 nbproject/private/
+/Euchre/nbproject/private/
