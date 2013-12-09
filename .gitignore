@@ -4,3 +4,10 @@
 *.jar
 *.war
 *.ear
+
+# NetBeans stuff #
+build/
+nbbuild/
+dist/
+nbdist/
+nbproject/private/
