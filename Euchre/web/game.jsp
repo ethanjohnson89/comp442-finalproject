@@ -197,10 +197,10 @@
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxBlank" id="41"><button type="button" onclick="">Hearts</button></div></td>
-			<td><div class="boxBlank" id="42"><button type="button" onclick="">Spades</button> </div></td>
-			<td><div class="boxBlank" id="43"><button type="button" onclick="">Clubs</button> </div></td>
+			<td><div class="boxBlank"> </div></td><!--these buttons all need an onclick function -->
+			<td><div class="boxBlank" id="41"><button type="button" onclick="">Hearts</button></div></td><!--suit option 1 -->
+			<td><div class="boxBlank" id="42"><button type="button" onclick="">Spades</button> </div></td><!--suit option 2 -->
+			<td><div class="boxBlank" id="43"><button type="button" onclick="">Clubs</button> </div></td><!--suit option 3 -->
 		</tr>
 	</table>
 	
