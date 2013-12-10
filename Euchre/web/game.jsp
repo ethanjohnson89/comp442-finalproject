@@ -96,12 +96,12 @@
 				<td><div class="box3">  </div></td>
 				<td><div class="box3"> </div></td>
 				<td><div class="box3">  </div></td>
-				<td><div class="boxT1">Team 1</div></td>
-				<td><div class="box3">Trump 1</div></td><!-- indicates team one called trump -->
+                                <td><div class="boxT1"><span id="topBottomTeam">Team 1</span></div></td>
+                                <td><div class="box3"><span id="team1TrumpYes">Trump</span></div></td><!-- indicates team one called trump -->
 				<td><div class="box3">  </div></td>
 				<td><div class="box3">  </div></td>
-				<td><div class="boxT2">Team 2</div></td>
-				<td><div class="box3">Trump 2</div></td><!-- indicates team two called trump  -->
+                                <td><div class="boxT2"><span id="leftRightTeam">Team 2</span></div></td>
+                                <td><div class="box3"><span id="team2TrumpYes">Trump</span></div></td><!-- indicates team two called trump  -->
 				<td><div class="box3"> </div></td>
 				<td><div class="box3">  </div></td>
 			</tr>
@@ -109,89 +109,89 @@
 				<td><div class="box3">  </div></td>
 				<td><div class="box3">  </div></td>
 				<td><div class="box3">  </div></td>
-				<td><div class="boxT1">Score</div></td>
-				<td><div class="box3">Suit 1</div></td><!-- indicates the trump suit for team one -->
+                                <td><div class="boxT1">Score:  <span id="topBottomScore"></span></div></td>
+                                <td><div class="box3"><span id="team1TrumpInd">Suit 1</span></div></td><!-- indicates the trump suit for team one -->
 				<td><div class="box3">  </div></td>
 				<td><div class="box3">  </div></td>
-				<td><div class="boxT2">Score</div></td>
-				<td><div class="box3">Suit2 </div></td><!-- indicates the trump suit for team two-->
+                                <td><div class="boxT2">Score: <span id="leftRightScore"></span></div></td>
+                                <td><div class="box3"><span id="team2TrumpInd">Suit2</span></div></td><!-- indicates the trump suit for team two-->
 				<td><div class="box3"> </div></td>
 				<td><div class="box3">  </div></td>
 			</tr>
 			<tr>
 				<td><div class="box3">  </div></td>
-				<td><div class="box3">Player 2</div></td><!-- player indicator -->
-				<td><div class="box3"> < dealer </div></td><!-- indicates player is dealer -->
-				<td><div class="boxT1">tricks: 5</div></td><!-- number of tricks team one has taken -->
+                                <td><div class="box3"><span id="left_name">Player 2</span></div></td><!-- player indicator -->
+                                <td><div class="box3"><span id="left_dealer"> < dealer </span></div></td><!-- indicates player is dealer -->
+                                <td><div class="boxT1">tricks: <span id="topBottomTricks"></span></div></td><!-- number of tricks team one has taken -->
 				<td><div class="box3"> </div></td>
-				<td><div class="box3">Player 3</div></td><!-- player indicator -->
-				<td><div class="box3"> < dealer </div></td><!-- indicates player is dealer -->
-				<td><div class="boxT2">tricks</div></td><!-- number of tricks team two has taken -->
+                                <td><div class="box3"><span id="top_name">Player 3</span></div></td><!-- player indicator -->
+                                <td><div class="box3"><span id="top_dealer"> < dealer </span></div></td><!-- indicates player is dealer -->
+                                <td><div class="boxT2">tricks: <span id="leftRightTricks"></span></div></td><!-- number of tricks team two has taken -->
 				<td><div class="box3">  </div></td>
-				<td><div class="box3">Player 4</div></td><!-- player indicator -->
-				<td><div class="box3"> < dealer </div></td><!-- indicates player is dealer -->
+                                <td><div class="box3"><span id="right_name">Player 4</span></div></td><!-- player indicator -->
+                                <td><div class="box3"><span id="right_dealer"> < dealer </span></div></td><!-- indicates player is dealer -->
 			</tr>
 		</table>
 	<table> <!-- shift all of them down one row -->
 		<tr>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"> <img id="1" src="back.png" /> </div></td><!-- P2's card -->
+			<td><div class="boxB" id="left_card1"></div></td><!-- P2's card -->
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxR"> <img id="11" src="back.png"  /> </div></td><!-- P3's card -->
-			<td><div class="boxR"> <img id="12" src="back.png"  /> </div></td><!-- P3's card-->
-			<td><div class="boxR"> <img id="13" src="back.png"  /> </div></td><!-- P3's card-->
-			<td><div class="boxR"> <img id="14" src="back.png"  /> </div></td><!-- P3's card-->
-			<td><div class="boxR"> <img id="15" src="back.png"  /> </div></td><!-- P3's card-->
-			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"> <img id="6" src="back.png"  /> </div></td><!-- P4's card -->
+			<td><div class="boxR" id="top_card1"></div></td><!-- P3's card -->
+			<td><div class="boxR" id="top_card2"></div></td><!-- P3's card-->
+			<td><div class="boxR" id="top_card3"></div></td><!-- P3's card-->
+			<td><div class="boxR" id="top_card4"></div></td><!-- P3's card-->
+			<td><div class="boxR" id="top_card5"></div></td><!-- P3's card-->
+			<td><div class="boxBlank"></div></td>
+			<td><div class="boxB" id="right_card1"></div></td><!-- P4's card -->
 		</tr>
 		<tr>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"> <img id="2" src="back.png"  /> </div></td><!-- P2's card -->
+			<td><div class="boxB" id="left_card2"></div></td><!-- P2's card -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxR"><img id="22" src="qd.png"   /></div></td><!-- card P3 played -->
+			<td><div class="boxR" id="top_cardplayed"></div></td><!-- card P3 played -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"> <img id="7" src="back.png"  /> </div></td><!-- P4's card -->
+			<td><div class="boxB" id="right_card2"></div></td><!-- P4's card -->
 		</tr>
 		<tr>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"> <img id="3" src="back.png"  /> </div></td><!-- P2's card -->
+			<td><div class="boxB" id="left_card3"></div></td><!-- P2's card -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"><img id="23" src="kc.png"   /></div></td><!-- card P2 played -->
+			<td><div class="boxB" id="left_cardplayed"></div></td><!-- card P2 played -->
 			<td><div class="boxQ"><img id="30" src="ks.png" onclick="show('30');"  /></div></td><!-- card that can be picked up to declare trump-->
-			<td><div class="boxB"><img id="24" src="jc.png"   /> </div></td><!-- card P4 played -->
+			<td><div class="boxB" id="right_cardplayed"></div></td><!-- card P4 played -->
 			<td><div class="boxBlank"><span id="42"><button type="button" onclick="">Ready</button></span> </div></td><!-- ready up button -->
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"> <img id="8" src="back.png"  /> </div></td><!--P4's card -->
+			<td><div class="boxB" id="right_card3"></div></td><!--P4's card -->
 		</tr>
 		<tr>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"> <img id="4" src="back.png"  /> </div></td><!--P2's card -->
+			<td><div class="boxB" id="left_card4"></div></td><!--P2's card -->
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxBlank"><span>Player 1</span></div></td><!-- player indicator -->
-			<td><div class="boxBlank"><span>< dealer</span></div></td><!-- indicates player is dealer -->
-			<td><div class="boxR"><img id="25" src="9h.png"   /></div></td><!-- card P1 played -->
+			<td><div class="boxBlank"><span id="bottom_name">Player 1</span></div></td><!-- player indicator -->
+			<td><div class="boxBlank"><span id="bottom_dealer">< dealer</span></div></td><!-- indicates player is dealer -->
+			<td><div class="boxR" id="bottom_cardplayed"></div></td><!-- card P1 played -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"> <img id="9" src="back.png"  /> </div></td><!--P4's card -->
+			<td><div class="boxB" id="right_card4"></div></td><!--P4's card -->
 		</tr>
 		<tr>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"> <img id="5" src="back.png"  /> </div></td><!--P2's card -->
+			<td><div class="boxB" id="left_card5"></div></td><!--P2's card -->
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxR"> <img id="16" src="9s.png" onclick="show('16');"  /> </div></td><!-- P1's card -->
-			<td><div class="boxR"> <img id="17" src="10s.png" onclick="show('17');"  /> </div></td><!-- P1's card-->
-			<td><div class="boxR"> <img id="18" src="js.png" onclick="show('18');"  /> </div></td><!-- P1's card-->
-			<td><div class="boxR"> <img id="19" src="qs.png" onclick="show('19');"  /> </div></td><!-- P1's card-->
-			<td><div class="boxR"> <img id="20" src="ks.png" onclick="show('20');"  /> </div></td><!-- P1's card-->
-			<td><div class="boxBlank"><img id="21" src="ah.png" onclick="show('20');"  /> </div></td><!-- if the player wants to pick the card up it goes here-->
-			<td><div class="boxB"> <img id="10" src="back.png"  /> </div></td><!--P4's card -->
+			<td><div class="boxR" id="bottom_card1"></div></td><!-- P1's card -->
+			<td><div class="boxR" id="bottom_card2"></div></td><!-- P1's card-->
+			<td><div class="boxR" id="bottom_card3"></div></td><!-- P1's card-->
+			<td><div class="boxR" id="bottom_card4"></div></td><!-- P1's card-->
+			<td><div class="boxR" id="bottom_card5"></div></td><!-- P1's card-->
+			<td><div class="boxBlank" id="bottom_card6"></div></td><!-- if the player wants to pick the card up it goes here-->
+			<td><div class="boxB" id="right_card5"></div></td><!--P4's card -->
 		</tr>
             	<tr>
 			<td><div class="boxBlank"> </div></td>
