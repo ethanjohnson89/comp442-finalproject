@@ -88,7 +88,7 @@
   
 		</style>
 	</head>
-	<body>
+	<body onload="init();">
 	<table> <!-- move these guys to the right of the cards -->
             <!-- The <td>'s dealerHand and playerHand will be populated with card images by the doAjaxRequest() script function.
                     They will contain <span>'s in the "card" class, each containing one <img> element specifying the card image. !-->

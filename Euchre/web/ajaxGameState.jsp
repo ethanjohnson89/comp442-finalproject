@@ -19,7 +19,7 @@
         <tricks><%= gameState.team1TricksTaken %></tricks>
         <% for(int p = 0; p < 3; p += 2) { %>
         <player>
-            <playerNum>1</playerNum>
+            <playerNum><%= p+1 %></playerNum>
             <name><%= gameState.playerNames[p] %></name>
             <% if(gameState.dealer == p+1) { %>
             <dealer />
@@ -69,7 +69,7 @@
         <tricks><%= gameState.team2TricksTaken %></tricks>
         <% for(int p = 1; p < 4; p += 2) { %>
         <player>
-            <playerNum>1</playerNum>
+            <playerNum><%= p+1 %></playerNum>
             <name><%= gameState.playerNames[p] %></name>
             <% if(gameState.dealer == p+1) { %>
             <dealer />

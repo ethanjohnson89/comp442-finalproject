@@ -46,10 +46,25 @@ public class EuchreController extends HttpServlet {
             servletContext.setAttribute("gameState", gameState);
             RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
             dispatcher.forward(request, response);
+            return;
         }
         
         if(enterGame != null && enterGame.equals("true") && loginName != null && !loginName.isEmpty())
         {
+            if(gameState != null && gameState.playerNames != null)
+            {
+                for(int i = 0; i < 4; i++)
+                {
+                    if(gameState.playerNames[i] != null && loginName.equals(gameState.playerNames[i])) // you're already in this game and are re-connecting
+                    {
+                        session.setAttribute("loginName", loginName);
+                        RequestDispatcher dispatcher = request.getRequestDispatcher("game.jsp");
+                        dispatcher.forward(request, response);
+                        return;
+                    }
+                }
+            }
+            
             if(gameState == null || gameState.phase == 7) // Build a fresh game state
             {
                 gameState = new GameState();
@@ -93,6 +108,7 @@ public class EuchreController extends HttpServlet {
 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("game.jsp");
                 dispatcher.forward(request, response);
+                return;
             }
             else // we're entering a game that already has players
             {
@@ -101,6 +117,7 @@ public class EuchreController extends HttpServlet {
                     session.setAttribute("error", "Sorry, game is full! Please try again later.");
                     RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
                     dispatcher.forward(request, response);
+                    return;
                 }
                 
                 gameState.playerNames[gameState.whoseTurn - 1] = loginName;
@@ -120,6 +137,7 @@ public class EuchreController extends HttpServlet {
                 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("game.jsp");
                 dispatcher.forward(request, response);
+                return;
             }
         }
         else // this is an AJAX request

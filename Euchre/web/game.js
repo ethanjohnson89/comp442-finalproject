@@ -46,6 +46,7 @@ var globalResponseXML;
 function init()
 {
     // init node globals
+    bottom_cards = new Array();
     bottom_cards.push(document.getElementById("bottom_card1"));
     bottom_cards.push(document.getElementById("bottom_card2"));
     bottom_cards.push(document.getElementById("bottom_card3"));
@@ -53,18 +54,21 @@ function init()
     bottom_cards.push(document.getElementById("bottom_card5"));
     bottom_cards.push(document.getElementById("bottom_card6"));
     
+    top_cards = new Array();
     top_cards.push(document.getElementById("top_card1"));
     top_cards.push(document.getElementById("top_card2"));
     top_cards.push(document.getElementById("top_card3"));
     top_cards.push(document.getElementById("top_card4"));
     top_cards.push(document.getElementById("top_card5"));
     
+    left_cards = new Array();
     left_cards.push(document.getElementById("left_card1"));
     left_cards.push(document.getElementById("left_card2"));
     left_cards.push(document.getElementById("left_card3"));
     left_cards.push(document.getElementById("left_card4"));
     left_cards.push(document.getElementById("left_card5"));
     
+    right_cards = new Array();
     right_cards.push(document.getElementById("right_card1"));
     right_cards.push(document.getElementById("right_card2"));
     right_cards.push(document.getElementById("right_card3"));
@@ -140,6 +144,76 @@ function updateGameState(connection)
             return;
         }
         
+        var teamNodes = responseXMLRoot.getElementsByTagName("team");
+        var yourTeamNum;
+        if(teamNodes[0].getElementsByTagName("you"))
+            yourTeamNum = 1;
+        else
+            yourTeamNum = 2;
         
+        var playerNodes = responseXMLRoot.getElementsByTagName("player");
+        var yourPlayerIndex, leftPlayerIndex, topPlayerIndex, rightPlayerIndex;
+        var yourPlayerNumber, leftPlayerNumber, topPlayerNumber, rightPlayerNumber;
+        if(playerNodes[0].getElementsByTagName("you"))
+        {
+            yourPlayerNumber = 1;
+            yourPlayerIndex = 0;
+            leftPlayerNumber = 2;
+            leftPlayerIndex = 2;
+            topPlayerNumber = 3;
+            topPlayerIndex = 1;
+            rightPlayerNumber = 4;
+            rightPlayerIndex = 3;
+        }
+        else if(playerNodes[1].getElementsByTagName("you"))
+        {
+            yourPlayerNumber = 3;
+            yourPlayerIndex = 1;
+            leftPlayerNumber = 4;
+            leftPlayerIndex = 3;
+            topPlayerNumber = 1;
+            topPlayerIndex = 0;
+            rightPlayerNumber = 2;
+            rightPlayerIndex = 2;
+        }
+        else if(playerNodes[2].getElementsByTagName("you"))
+        {
+            yourPlayerNumber = 2;
+            yourPlayerIndex = 2;
+            leftPlayerNumber = 3;
+            leftPlayerIndex = 1;
+            topPlayerNumber = 4;
+            topPlayerIndex = 3;
+            rightPlayerNumber = 1;
+            rightPlayerIndex = 0;
+        }
+        else if(playerNodes[3].getElementsByTagName("you"))
+        {
+            yourPlayerNumber = 4;
+            yourPlayerIndex = 3;
+            leftPlayerNumber = 1;
+            leftPlayerIndex = 0;
+            topPlayerNumber = 2;
+            topPlayerIndex = 2;
+            rightPlayerNumber = 3;
+            rightPlayerIndex = 1;
+        }
+        
+        var yourName = playerNodes[yourPlayerIndex].getElementsByTagName("name")[0].childNodes[0].data;
+        var leftPlayerName = playerNodes[leftPlayerIndex].getElementsByTagName("name")[0].childNodes[0].data;
+        var topPlayerName = playerNodes[topPlayerIndex].getElementsByTagName("name")[0].childNodes[0].data;
+        var rightPlayerName = playerNodes[rightPlayerIndex].getElementsByTagName("name")[0].childNodes[0].data;
+        
+        if(leftPlayerName === "null")
+            leftPlayerName = "Waiting...";
+        if(topPlayerName === "null")
+            topPlayerName = "Waiting...";
+        if(rightPlayerName === "null")
+            rightPlayerName = "Waiting...";
+        
+        bottomNameInd.children[0].childNodes[0].data = yourName;
+        leftNameInd.childNodes[0].data = leftPlayerName;
+        topNameInd.childNodes[0].data = topPlayerName;
+        rightNameInd.childNodes[0].data = rightPlayerName;
     }
 }
