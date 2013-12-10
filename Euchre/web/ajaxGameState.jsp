@@ -36,13 +36,13 @@
             <% if(gameState.isReady[p]) { %>
             <ready />
             <% } %>
-            <% for(int i = 0; i < gameState.playerHands[p].size(); i++) { %>
+            <% for(int i = 0; i < gameState.playerHands.get(p).size(); i++) { %>
             <handCard>
                 <% if(playerNumber == p+1) { %>
                 <overturned>true</overturned>
-                <faceValue><%= gameState.playerHands[p].get(i).getFaceValue() %></faceValue>
-                <suit><%= gameState.playerHands[p].get(i).getSuit() %></suit>
-                <imgFileName><%= gameState.playerHands[p].get(i).getImgFileName() %></imgFileName>
+                <faceValue><%= gameState.playerHands.get(p).get(i).getFaceValue() %></faceValue>
+                <suit><%= gameState.playerHands.get(p).get(i).getSuit() %></suit>
+                <imgFileName><%= gameState.playerHands.get(p).get(i).getImgFileName() %></imgFileName>
                 <% } else { %>
                 <overturned>false</overturned>
                 <imgFileName>back</imgFileName>
@@ -86,13 +86,13 @@
             <% if(gameState.isReady[p]) { %>
             <ready />
             <% } %>
-            <% for(int i = 0; i < gameState.playerHands[p].size(); i++) { %>
+            <% for(int i = 0; i < gameState.playerHands.get(p).size(); i++) { %>
             <handCard>
                 <% if(playerNumber == p+1) { %>
                 <overturned>true</overturned>
-                <faceValue><%= gameState.playerHands[p].get(i).getFaceValue() %></faceValue>
-                <suit><%= gameState.playerHands[p].get(i).getSuit() %></suit>
-                <imgFileName><%= gameState.playerHands[p].get(i).getImgFileName() %></imgFileName>
+                <faceValue><%= gameState.playerHands.get(p).get(i).getFaceValue() %></faceValue>
+                <suit><%= gameState.playerHands.get(p).get(i).getSuit() %></suit>
+                <imgFileName><%= gameState.playerHands.get(p).get(i).getImgFileName() %></imgFileName>
                 <% } else { %>
                 <overturned>false</overturned>
                 <imgFileName>back</imgFileName>

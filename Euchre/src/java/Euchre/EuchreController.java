@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class EuchreController extends HttpServlet {
 
@@ -75,9 +77,12 @@ public class EuchreController extends HttpServlet {
                 }
                 Collections.shuffle(gameState.discardPile);
 
+                gameState.playerHands = new ArrayList<Stack<Card>>(4);
+                for(int i = 0; i < 4; i++)
+                    gameState.playerHands.add(new Stack<Card>());
                 for(int i = 0; i < 5; i++) // deal 5 cards to each player
                     for(int j = 0; j < 4; j++)
-                        gameState.playerHands[j].add(gameState.discardPile.pop());
+                        gameState.playerHands.get(j).add(gameState.discardPile.pop());
                 gameState.pickCard = gameState.discardPile.pop();
                 gameState.playedCards = new Card[4];
 
@@ -178,7 +183,7 @@ public class EuchreController extends HttpServlet {
                         gameState.phase = 2; // the dealer now needs to choose a discard
                         gameState.trumpSuit = gameState.pickCard.getSuit();
                         gameState.whoseTurn = gameState.dealer;
-                        gameState.playerHands[gameState.dealer - 1].push(gameState.pickCard);
+                        gameState.playerHands.get(gameState.dealer - 1).push(gameState.pickCard);
                         gameState.pickCard = null;
                     }
                     else if(choice.equals("no"))
@@ -227,10 +232,10 @@ public class EuchreController extends HttpServlet {
                     }
                     
                     int indexToDiscard = 0;
-                    for(; indexToDiscard < gameState.playerHands[gameState.whoseTurn - 1].size(); indexToDiscard++)
-                        if(toDiscard.equals(gameState.playerHands[gameState.whoseTurn - 1].get(indexToDiscard)))
+                    for(; indexToDiscard < gameState.playerHands.get(gameState.whoseTurn - 1).size(); indexToDiscard++)
+                        if(toDiscard.equals(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToDiscard)))
                             break;
-                    if(indexToDiscard >= gameState.playerHands[gameState.whoseTurn - 1].size())
+                    if(indexToDiscard >= gameState.playerHands.get(gameState.whoseTurn - 1).size())
                     {
                         PrintWriter out = response.getWriter();
                         out.println("<error>invalidCard</error>");
@@ -239,8 +244,8 @@ public class EuchreController extends HttpServlet {
                     }
                     
                     // Discard the selected card, and put the pick card in its place in the dealer's hand
-                    gameState.discardPile.push(gameState.playerHands[gameState.whoseTurn - 1].get(indexToDiscard));
-                    gameState.playerHands[gameState.whoseTurn - 1].set(indexToDiscard, gameState.pickCard);
+                    gameState.discardPile.push(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToDiscard));
+                    gameState.playerHands.get(gameState.whoseTurn - 1).set(indexToDiscard, gameState.pickCard);
                     gameState.pickCard = null;
                     
                     // Proceed to phase 4 (trump suit has already been picked, so skip phase 3)
@@ -283,8 +288,8 @@ public class EuchreController extends HttpServlet {
                             
                             // Reshuffle and deal deck
                             for(int i = 0; i < 4; i++)
-                                while(!gameState.playerHands[i].empty())
-                                    gameState.discardPile.push(gameState.playerHands[i].pop());
+                                while(!gameState.playerHands.get(i).empty())
+                                    gameState.discardPile.push(gameState.playerHands.get(i).pop());
                             for(int i = 0; i < 4; i++)
                                 if(gameState.playedCards[i] != null)
                                 {
@@ -297,7 +302,7 @@ public class EuchreController extends HttpServlet {
                             Collections.shuffle(gameState.discardPile);
                             for(int i = 0; i < 5; i++) // deal 5 cards to each player
                                 for(int j = 0; j < 4; j++)
-                                    gameState.playerHands[j].add(gameState.discardPile.pop());
+                                    gameState.playerHands.get(j).add(gameState.discardPile.pop());
                             gameState.pickCard = gameState.discardPile.pop();
                         }
                     }
@@ -382,10 +387,10 @@ public class EuchreController extends HttpServlet {
                     }
                     
                     int indexToPlay = 0;
-                    for(; indexToPlay < gameState.playerHands[gameState.whoseTurn - 1].size(); indexToPlay++)
-                        if(toPlay.equals(gameState.playerHands[gameState.whoseTurn - 1].get(indexToPlay)))
+                    for(; indexToPlay < gameState.playerHands.get(gameState.whoseTurn - 1).size(); indexToPlay++)
+                        if(toPlay.equals(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToPlay)))
                             break;
-                    if(indexToPlay >= gameState.playerHands[gameState.whoseTurn - 1].size())
+                    if(indexToPlay >= gameState.playerHands.get(gameState.whoseTurn - 1).size())
                     {
                         PrintWriter out = response.getWriter();
                         out.println("<error>invalidCard</error>");
@@ -399,16 +404,16 @@ public class EuchreController extends HttpServlet {
                         if(gameState.playedCards[i] != null)
                             isLeader = false;
                     if(isLeader)
-                        gameState.suitLead = gameState.playerHands[gameState.whoseTurn - 1].get(indexToPlay).getSuit();
+                        gameState.suitLead = gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToPlay).getSuit();
                     else
                     {
-                        if(gameState.playerHands[gameState.whoseTurn - 1].get(indexToPlay).getSuit() != gameState.suitLead)
+                        if(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToPlay).getSuit() != gameState.suitLead)
                         {
                             // The card is not of the suit that was lead, but it might still be OK if the player doesn't
                             // have any cards of the suit lead.
                             boolean hasCardOfSuitLead = true;
-                            for(int i = 0; i < gameState.playerHands[gameState.whoseTurn - 1].size(); i++)
-                                if(gameState.playerHands[gameState.whoseTurn - 1].get(i).getSuit() == gameState.suitLead)
+                            for(int i = 0; i < gameState.playerHands.get(gameState.whoseTurn - 1).size(); i++)
+                                if(gameState.playerHands.get(gameState.whoseTurn - 1).get(i).getSuit() == gameState.suitLead)
                                 {
                                     hasCardOfSuitLead = true;
                                     break;
@@ -424,7 +429,7 @@ public class EuchreController extends HttpServlet {
                     }
                     
                     // The card can be played, so we wil do so.
-                    gameState.playedCards[gameState.whoseTurn - 1] = gameState.playerHands[gameState.whoseTurn - 1].remove(indexToPlay);
+                    gameState.playedCards[gameState.whoseTurn - 1] = gameState.playerHands.get(gameState.whoseTurn - 1).remove(indexToPlay);
                     gameState.hasPlayed[gameState.whoseTurn - 1] = true;
                     gameState.whoseTurn++;
                     if(gameState.whoseTurn > 4)
@@ -526,8 +531,8 @@ public class EuchreController extends HttpServlet {
 
                                 // Reshuffle and deal deck
                                 for(int i = 0; i < 4; i++)
-                                    while(!gameState.playerHands[i].empty())
-                                        gameState.discardPile.push(gameState.playerHands[i].pop());
+                                    while(!gameState.playerHands.get(i).empty())
+                                        gameState.discardPile.push(gameState.playerHands.get(i).pop());
                                 for(int i = 0; i < 4; i++)
                                     if(gameState.playedCards[i] != null)
                                     {
@@ -540,7 +545,7 @@ public class EuchreController extends HttpServlet {
                                 Collections.shuffle(gameState.discardPile);
                                 for(int i = 0; i < 5; i++) // deal 5 cards to each player
                                     for(int j = 0; j < 4; j++)
-                                        gameState.playerHands[j].add(gameState.discardPile.pop());
+                                        gameState.playerHands.get(j).add(gameState.discardPile.pop());
                                 gameState.pickCard = gameState.discardPile.pop();
                             }
                         }
@@ -561,8 +566,8 @@ public class EuchreController extends HttpServlet {
                             
                             // Reshuffle and deal deck
                             for(int i = 0; i < 4; i++)
-                                while(!gameState.playerHands[i].empty())
-                                    gameState.discardPile.push(gameState.playerHands[i].pop());
+                                while(!gameState.playerHands.get(i).empty())
+                                    gameState.discardPile.push(gameState.playerHands.get(i).pop());
                             for(int i = 0; i < 4; i++)
                                 if(gameState.playedCards[i] != null)
                                 {
@@ -575,7 +580,7 @@ public class EuchreController extends HttpServlet {
                             Collections.shuffle(gameState.discardPile);
                             for(int i = 0; i < 5; i++) // deal 5 cards to each player
                                 for(int j = 0; j < 4; j++)
-                                    gameState.playerHands[j].add(gameState.discardPile.pop());
+                                    gameState.playerHands.get(j).add(gameState.discardPile.pop());
                             gameState.pickCard = gameState.discardPile.pop();
                         }
                     }

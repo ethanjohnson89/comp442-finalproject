@@ -1,5 +1,6 @@
 package Euchre;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 // This class is used internally within EuchreController as a container for game-state variables.
@@ -27,7 +28,7 @@ public class GameState {
     public int whoPickedTrump; // team #: 1 or 2
     public Card.Suit suitLead;
     
-    public Stack<Card>[] playerHands;
+    public ArrayList<Stack<Card>> playerHands; // this would be an array of size 4 if Java could make arrays of generic types
     public Stack<Card> discardPile;
     public Card pickCard; // null means the card has been taken, or otherwise cleared off the table
     public Card[] playedCards; // array of size 4 - cards currently out on the table (null element means spot is empty)
