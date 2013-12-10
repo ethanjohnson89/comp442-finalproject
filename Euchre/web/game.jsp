@@ -193,6 +193,15 @@
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxB"> <img id="10" src="back.png" onclick="show('10');" /> </div></td><!--P4's card -->
 		</tr>
+            	<tr>
+			<td><div class="boxBlank"> </div></td>
+			<td><div class="boxBlank"> </div></td>
+			<td><div class="boxBlank"> </div></td>
+			<td><div class="boxBlank"> </div></td>
+			<td><div class="boxBlank" id="41"><button type="button" onclick="">Hearts</button></div></td>
+			<td><div class="boxBlank" id="42"><button type="button" onclick="">Spades</button> </div></td>
+			<td><div class="boxBlank" id="43"><button type="button" onclick="">Clubs</button> </div></td>
+		</tr>
 	</table>
 	
 	</body>
