@@ -76,7 +76,5 @@
         </player>
     </team>
     <phase> </phase>
-    
-    
-    
+    <suitLead> </suitLead>
 </table>
