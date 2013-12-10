@@ -9,6 +9,8 @@ var top_card_played;
 var left_card_played;
 var right_card_played;
 
+var pickCardNode;
+
 var readyButtonSpan;
 var suitSelectButtonsSpan;
 
@@ -73,6 +75,8 @@ function init()
     top_card_played = document.getElementById("top_cardplayed");
     left_card_played = document.getElementById("left_cardplayed");
     right_card_played = document.getElementById("right_cardplayed");
+    
+    pickCardNode = document.getElementById("pickCard");
     
     readyButtonSpan = document.getElementById("42");
     suitSelectButtonsSpan = document.getElementById("41");
