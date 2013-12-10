@@ -13,10 +13,14 @@
         <style type="text/css">
 		body	{ font-family: "Arial",sans-serif; background-color: seashell }
                 .supertiny { font-size: 8pt; }
+                .error  { font-color: red; }
 	</style>
     </head>
     <body>
         <h1>Welcome to Euchre!</h1>
+        <% if(session.getAttribute("error") != null) { %>
+        <h3 class="error"><%= (String)session.getAttribute("error") %></h3>
+        <% } %>
         <h3>Enter your name to join the game:</h3>
         <form method="post" action="EuchreController">
             <input type="text" id="loginName" size="15" />

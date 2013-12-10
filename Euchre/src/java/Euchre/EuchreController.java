@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class EuchreController extends HttpServlet {
 
@@ -32,11 +33,13 @@ public class EuchreController extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         ServletContext servletContext = getServletContext();
+        HttpSession session = request.getSession();
         
         GameState gameState = (GameState)servletContext.getAttribute("gameState");
         
         String resetEverything = request.getParameter("resetEverything");
         String enterGame = request.getParameter("enterGame");
+        String loginName = request.getParameter("loginName");
         
         if(resetEverything != null && resetEverything.equals("true"))
         {
@@ -46,7 +49,7 @@ public class EuchreController extends HttpServlet {
             dispatcher.forward(request, response);
         }
         
-        if(enterGame != null && enterGame.equals("true"))
+        if(enterGame != null && enterGame.equals("true") && loginName != null && !loginName.isEmpty())
         {
             if(gameState == null) // Build a fresh game state
             {
@@ -56,10 +59,13 @@ public class EuchreController extends HttpServlet {
                 gameState.phase = 0;
                 Random randGen = new Random();
                 gameState.dealer = randGen.nextInt(4) + 1;
-                gameState.whoseTurn = ((gameState.dealer - 1) % 4) + 1;
+                gameState.whoseTurn = 2; // while we're picking up new players, this indicates the next spot to be filled
                 gameState.playerNames = new String[4];
+                gameState.playerNames[0] = loginName;
+                session.setAttribute("loginName", loginName); // will be used to identify the player throughout the game
                 gameState.hasPlayed = new boolean[4];
                 gameState.isReady = new boolean[4];
+                gameState.isReady[0] = true;
 
                 // Shuffle the deck and deal to players
                 gameState.discardPile = new Stack<Card>();
@@ -71,13 +77,9 @@ public class EuchreController extends HttpServlet {
                 }
                 Collections.shuffle(gameState.discardPile);
 
-                for(int i = 0; i < 5; i++)
-                {
-                    gameState.player1Hand.add(gameState.discardPile.pop());
-                    gameState.player2Hand.add(gameState.discardPile.pop());
-                    gameState.player3Hand.add(gameState.discardPile.pop());
-                    gameState.player4Hand.add(gameState.discardPile.pop());
-                }
+                for(int i = 0; i < 5; i++) // deal 5 cards to each player
+                    for(int j = 0; j < 4; j++)
+                        gameState.playerHands[j].add(gameState.discardPile.pop());
                 gameState.pickCard = gameState.discardPile.pop();
                 gameState.playedCards = new Card[4];
 
@@ -89,13 +91,52 @@ public class EuchreController extends HttpServlet {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("game.jsp");
                 dispatcher.forward(request, response);
             }
-            else
+            else // we're entering a game that already has players
             {
-
+                if(gameState.phase != 0) // we're no longer accepting new players (game is full)
+                {
+                    session.setAttribute("error", "Sorry, game is full! Please try again later.");
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+                    dispatcher.forward(request, response);
+                }
+                
+                gameState.playerNames[gameState.whoseTurn - 1] = loginName;
+                session.setAttribute("loginName", loginName);
+                gameState.isReady[gameState.whoseTurn - 1] = true;
+                gameState.whoseTurn++;
+                
+                RequestDispatcher dispatcher = request.getRequestDispatcher("game.jsp");
+                dispatcher.forward(request, response);
             }
         }
-        else
+        else // this is an AJAX request
         {
+            if(gameState == null)
+            {
+                session.setAttribute("error", "Unknown internal error! You will probably need to reset the game with the link below.");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+                dispatcher.forward(request, response);
+            }
+            
+            String sessionLoginName = (String)session.getAttribute("loginName");
+            if(sessionLoginName == null)
+            {
+                session.setAttribute("error", "No username token sent! Try joining the game again.");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+                dispatcher.forward(request, response);
+            }
+
+            int playerNumber;
+            for(playerNumber = 1; playerNumber <= 4; playerNumber++)
+                if(gameState.playerNames[playerNumber-1].equals(sessionLoginName))
+                    break;
+            if(playerNumber > 4)
+            {
+                session.setAttribute("error", "Sorry, you're not in this game! Try joining the game again.");
+                RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
+                dispatcher.forward(request, response);
+            }
+            
             
         }
     }
