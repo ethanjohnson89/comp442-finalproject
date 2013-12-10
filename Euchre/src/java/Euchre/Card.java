@@ -70,6 +70,121 @@ public class Card {
             pointValue = faceValue;
     }
     
+    public Card(String imgFileName) throws Exception
+    {
+        this.imgFileName = imgFileName;
+        if(imgFileName.length() == 3)
+        {
+            faceValue = Integer.parseInt(imgFileName.substring(0, 1));
+            switch(imgFileName.charAt(2))
+            {
+                case 'c':
+                    suit = Suit.CLUBS;
+                    break;
+                case 'd':
+                    suit = Suit.DIAMONDS;
+                    break;
+                case 's':
+                    suit = Suit.SPADES;
+                    break;
+                case 'h':
+                    suit = Suit.HEARTS;
+                    break;
+                default:
+                    throw new Exception();
+            }
+        }
+        else if(imgFileName.length() == 2)
+        {
+            if(Character.isLetter(imgFileName.charAt(0)))
+            {
+                switch(imgFileName.charAt(0))
+                {
+                    case 'a':
+                        faceValue = 1;
+                        break;
+                    case 'j':
+                        faceValue = 11;
+                        break;
+                    case 'q':
+                        faceValue = 12;
+                        break;
+                    case 'k':
+                        faceValue = 13;
+                        break;
+                    default:
+                        throw new Exception();
+                }
+                switch(imgFileName.charAt(1))
+                {
+                    case 'c':
+                        suit = Suit.CLUBS;
+                        break;
+                    case 'd':
+                        suit = Suit.DIAMONDS;
+                        break;
+                    case 's':
+                        suit = Suit.SPADES;
+                        break;
+                    case 'h':
+                        suit = Suit.HEARTS;
+                        break;
+                    default:
+                        throw new Exception();
+                }
+            }
+            else
+            {
+                faceValue = Integer.parseInt(imgFileName.substring(0,0));
+                switch(imgFileName.charAt(1))
+                {
+                    case 'c':
+                        suit = Suit.CLUBS;
+                        break;
+                    case 'd':
+                        suit = Suit.DIAMONDS;
+                        break;
+                    case 's':
+                        suit = Suit.SPADES;
+                        break;
+                    case 'h':
+                        suit = Suit.HEARTS;
+                        break;
+                    default:
+                        throw new Exception();
+                }
+            }
+        }
+        else
+            throw new Exception();
+        
+        sortValue = faceValue; // clubs' sort value is face value, others have offset added below
+        switch(suit)
+        {
+            case DIAMONDS:
+                sortValue += 13;
+                break;
+            case SPADES:
+                sortValue += 26;
+                break;
+            case HEARTS:
+                sortValue += 39;
+                break;
+        }
+        
+        if(faceValue > 10)
+            pointValue = 10;
+        else if(faceValue == 1)
+            pointValue = 11; // aces are usually 11 but can be 1 in some cases - this is handled in the game logic
+        else
+            pointValue = faceValue;
+    }
+    
+    public boolean equals(Card other)
+    {
+        return (faceValue == other.faceValue) && (suit == other.suit);
+    }
+    
     private int sortValue;
     private int pointValue;
     private Suit suit;

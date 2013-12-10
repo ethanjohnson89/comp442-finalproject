@@ -27,10 +27,7 @@ public class EuchreController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // The PrintWriter will be used when we need to return simple XML indicating an error;
-        // for more complex responses, we'll forward to a .jsp page.
         response.setContentType("application/xml;charset=UTF-8");
-        PrintWriter out = response.getWriter();
         
         ServletContext servletContext = getServletContext();
         HttpSession session = request.getSession();
@@ -104,6 +101,15 @@ public class EuchreController extends HttpServlet {
                 session.setAttribute("loginName", loginName);
                 gameState.isReady[gameState.whoseTurn - 1] = true;
                 gameState.whoseTurn++;
+                if(gameState.whoseTurn > 4) // filled all 4 spaces, continue to pick-up phase
+                {
+                    gameState.phase = 1;
+                    gameState.whoseTurn = gameState.dealer + 1;
+                    if(gameState.whoseTurn > 4)
+                        gameState.whoseTurn = 1;
+                    for(int i = 0; i < 4; i++)
+                        gameState.hasPlayed[i] = false;
+                }
                 
                 RequestDispatcher dispatcher = request.getRequestDispatcher("game.jsp");
                 dispatcher.forward(request, response);
@@ -113,17 +119,19 @@ public class EuchreController extends HttpServlet {
         {
             if(gameState == null)
             {
-                session.setAttribute("error", "Unknown internal error! You will probably need to reset the game with the link below.");
-                RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-                dispatcher.forward(request, response);
+                PrintWriter out = response.getWriter();
+                out.println("<error>nullGameState</error>");
+                out.close();
+                return;
             }
             
             String sessionLoginName = (String)session.getAttribute("loginName");
             if(sessionLoginName == null)
             {
-                session.setAttribute("error", "No username token sent! Try joining the game again.");
-                RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-                dispatcher.forward(request, response);
+                PrintWriter out = response.getWriter();
+                out.println("<error>noUsernameTokenSent</error>");
+                out.close();
+                return;
             }
 
             int playerNumber;
@@ -132,12 +140,131 @@ public class EuchreController extends HttpServlet {
                     break;
             if(playerNumber > 4)
             {
-                session.setAttribute("error", "Sorry, you're not in this game! Try joining the game again.");
-                RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-                dispatcher.forward(request, response);
+                PrintWriter out = response.getWriter();
+                out.println("<error>notInGame</error>");
+                out.close();
+                return;
             }
             
+            // If we've gotten this far, the player is indeed part of this game, so we'll process his request.
+            String action = request.getParameter("action");
+            if(action != null && !action.isEmpty())
+            {
+                if(gameState.whoseTurn != playerNumber)
+                {
+                    PrintWriter out = response.getWriter();
+                    out.println("<error>notYourTurn</error>");
+                    out.close();
+                    return;
+                }
+                
+                // If none of these actions are matched, we'll just fall through to the code below that forwards
+                // to ajaxGameState.jsp (without taking any actions - i.e. we're just sending the current game state)
+                String choice = request.getParameter("choice"); // this is defined for some, but not all actions
+                if(action.equals("pickUp") && choice != null) // choice should be "yes" or "no"
+                {
+                    if(gameState.phase != 1)
+                    {
+                        PrintWriter out = response.getWriter();
+                        out.println("<error>cannotTakeThatActionNow</error>");
+                        out.close();
+                        return;
+                    }
+                    
+                    if(choice.equals("yes")) // the player wants the dealer to pick up the card
+                    {
+                        gameState.phase = 2; // the dealer now needs to choose a discard
+                        gameState.trumpSuit = gameState.pickCard.getSuit();
+                        gameState.whoseTurn = gameState.dealer;
+                        gameState.playerHands[gameState.dealer - 1].push(gameState.pickCard);
+                        gameState.pickCard = null;
+                    }
+                    else if(choice.equals("no"))
+                    {
+                        gameState.hasPlayed[gameState.whoseTurn - 1] = true;
+                        gameState.whoseTurn++;
+                        if(gameState.whoseTurn > 4)
+                            gameState.whoseTurn = 1;
+                        if(gameState.hasPlayed[gameState.whoseTurn - 1]) // we've gone around the whole circle, move to trump selection phase
+                        {
+                            gameState.phase = 3;
+                            gameState.whoseTurn = gameState.dealer + 1;
+                            if(gameState.whoseTurn > 4)
+                                gameState.whoseTurn = 1;
+                            for(int i = 0; i < 4; i++)
+                                gameState.hasPlayed[i] = false;
+                            gameState.hasPlayed[gameState.dealer - 1] = true; // dealer does not participate in trump selection phase
+                        }
+                    }
+                    else // invalid choice
+                    {
+                        PrintWriter out = response.getWriter();
+                        out.println("<error>invalidChoiceForAction</error>");
+                        out.close();
+                        return;
+                    }
+                }
+                else if(action.equals("discard") && choice != null) // choice should be a card imgName
+                {
+                    if(gameState.phase != 2)
+                    {
+                        PrintWriter out = response.getWriter();
+                        out.println("<error>cannotTakeThatActionNow</error>");
+                        out.close();
+                        return;
+                    }
+                    
+                    Card toDiscard;
+                    try { toDiscard = new Card(choice); }
+                    catch (Exception e)
+                    {
+                        PrintWriter out = response.getWriter();
+                        out.println("<error>invalidCard</error>");
+                        out.close();
+                        return;
+                    }
+                    
+                    int indexToDiscard = 0;
+                    for(; indexToDiscard < gameState.playerHands[gameState.whoseTurn - 1].size(); indexToDiscard++)
+                        if(toDiscard.equals(gameState.playerHands[gameState.whoseTurn - 1].get(indexToDiscard)))
+                            break;
+                    if(indexToDiscard >= gameState.playerHands[gameState.whoseTurn - 1].size())
+                    {
+                        PrintWriter out = response.getWriter();
+                        out.println("<error>invalidCard</error>");
+                        out.close();
+                        return;
+                    }
+                    
+                    // Discard the selected card, and put the pick card in its place in the dealer's hand
+                    gameState.discardPile.push(gameState.playerHands[gameState.whoseTurn - 1].get(indexToDiscard));
+                    gameState.playerHands[gameState.whoseTurn - 1].set(indexToDiscard, gameState.pickCard);
+                    gameState.pickCard = null;
+                    
+                    // Proceed to phase 4 (trump suit has already been picked, so skip phase 3)
+                    gameState.phase = 4;
+                    gameState.whoseTurn = gameState.dealer + 1;
+                    if(gameState.whoseTurn > 4)
+                        gameState.whoseTurn = 1;
+                    for(int i = 0; i < 4; i++)
+                        gameState.hasPlayed[i] = false;
+                }
+                else if(action.equals("pickTrump") && choice != null) // choice should be a suit name (lowercase)
+                {
+                    
+                }
+                else if(action.equals("playCard") && choice != null) // choice should be a card imgName
+                {
+                    
+                }
+                else if(action.equals("readyUp")) // choice is not used
+                {
+                    
+                }
+            }
             
+            RequestDispatcher dispatcher = request.getRequestDispatcher("ajaxGameState.jsp");
+            dispatcher.forward(request, response);
         }
     }
 
