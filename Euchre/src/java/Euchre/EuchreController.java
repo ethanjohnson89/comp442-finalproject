@@ -249,9 +249,99 @@ public class EuchreController extends HttpServlet {
                     for(int i = 0; i < 4; i++)
                         gameState.hasPlayed[i] = false;
                 }
-                else if(action.equals("pickTrump") && choice != null) // choice should be a suit name (lowercase)
+                else if(action.equals("pickTrump") && choice != null) // choice should be a suit name (lowercase) or "pass"
                 {
+                    if(gameState.phase != 3)
+                    {
+                        PrintWriter out = response.getWriter();
+                        out.println("<error>cannotTakeThatActionNow</error>");
+                        out.close();
+                        return;
+                    }
                     
+                    if(choice.equals("pass"))
+                    {
+                        gameState.hasPlayed[gameState.whoseTurn - 1] = true;
+                        gameState.whoseTurn++;
+                        if(gameState.whoseTurn > 4)
+                            gameState.whoseTurn = 1;
+                        if(gameState.hasPlayed[gameState.whoseTurn - 1]) // we've gone around the whole circle - no suit chosen, reshuffle and restart hand
+                        {
+                            gameState.phase = 1;
+                            gameState.dealer++;
+                            if(gameState.dealer > 4)
+                                gameState.dealer = 1;
+                            gameState.whoseTurn = gameState.dealer + 1;
+                            if(gameState.whoseTurn > 4)
+                                gameState.whoseTurn = 1;
+                            for(int i = 0; i < 4; i++)
+                                gameState.hasPlayed[i] = false;
+                            for(int i = 0; i < 4; i++)
+                                gameState.isReady[i] = false;
+                            
+                            // Reshuffle and deal deck
+                            for(int i = 0; i < 4; i++)
+                                while(!gameState.playerHands[i].empty())
+                                    gameState.discardPile.push(gameState.playerHands[i].pop());
+                            for(int i = 0; i < 4; i++)
+                                if(gameState.playedCards[i] != null)
+                                {
+                                    gameState.discardPile.push(gameState.playedCards[i]);
+                                    gameState.playedCards[i] = null;
+                                }
+                            gameState.discardPile.push(gameState.pickCard);
+                            gameState.pickCard = null;
+                            
+                            Collections.shuffle(gameState.discardPile);
+                            for(int i = 0; i < 5; i++) // deal 5 cards to each player
+                                for(int j = 0; j < 4; j++)
+                                    gameState.playerHands[j].add(gameState.discardPile.pop());
+                            gameState.pickCard = gameState.discardPile.pop();
+                        }
+                    }
+                    else if(choice.equals("clubs"))
+                    {
+                        gameState.trumpSuit = Card.Suit.CLUBS;
+                        gameState.whoseTurn = gameState.dealer + 1;
+                        if(gameState.whoseTurn > 4)
+                            gameState.whoseTurn = 1;
+                        for(int i = 0; i < 4; i++)
+                            gameState.hasPlayed[i] = false;
+                    }
+                    else if(choice.equals("diamonds"))
+                    {
+                        gameState.trumpSuit = Card.Suit.DIAMONDS;
+                        gameState.whoseTurn = gameState.dealer + 1;
+                        if(gameState.whoseTurn > 4)
+                            gameState.whoseTurn = 1;
+                        for(int i = 0; i < 4; i++)
+                            gameState.hasPlayed[i] = false;
+                    }
+                    else if(choice.equals("spades"))
+                    {
+                        gameState.trumpSuit = Card.Suit.SPADES;
+                        gameState.whoseTurn = gameState.dealer + 1;
+                        if(gameState.whoseTurn > 4)
+                            gameState.whoseTurn = 1;
+                        for(int i = 0; i < 4; i++)
+                            gameState.hasPlayed[i] = false;
+                    }
+                    else if(choice.equals("hearts"))
+                    {
+                        gameState.trumpSuit = Card.Suit.HEARTS;
+                        gameState.whoseTurn = gameState.dealer + 1;
+                        if(gameState.whoseTurn > 4)
+                            gameState.whoseTurn = 1;
+                        for(int i = 0; i < 4; i++)
+                            gameState.hasPlayed[i] = false;
+                    }
+                    else
+                    {
+                        PrintWriter out = response.getWriter();
+                        out.println("<error>invalidTrumpPick</error>");
+                        out.close();
+                        return;
+                    }
                 }
                 else if(action.equals("playCard") && choice != null) // choice should be a card imgName
                 {
