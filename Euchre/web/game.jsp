@@ -165,7 +165,7 @@
 			<td><div class="boxB"><img id="23" src="kc.png"   /></div></td><!-- card P2 played -->
 			<td><div class="boxQ"><img id="30" src="ks.png" onclick="show('30');"  /></div></td><!-- card that can be picked up to declare trump-->
 			<td><div class="boxB"><img id="24" src="jc.png"   /> </div></td><!-- card P4 played -->
-			<td><div class="boxBlank"> </div></td>
+			<td><div class="boxBlank"><span id="42"><button type="button" onclick="">Ready</button></span> </div></td><!-- ready up button -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxB"> <img id="8" src="back.png"  /> </div></td><!--P4's card -->
 		</tr>
