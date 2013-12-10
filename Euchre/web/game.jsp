@@ -151,7 +151,7 @@
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxR"><img id="21" src="qd.png" onclick="show('21');"  /></div></td><!-- card P3 played -->
+			<td><div class="boxR"><img id="22" src="qd.png" onclick="show('21');"  /></div></td><!-- card P3 played -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
@@ -162,9 +162,9 @@
 			<td><div class="boxB"> <img id="3" src="back.png" onclick="show('3');" /> </div></td><!-- P2's card -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxB"><img id="22" src="kc.png" onclick="show('22');"  /></div></td><!-- card P2 played -->
+			<td><div class="boxB"><img id="23" src="kc.png" onclick="show('22');"  /></div></td><!-- card P2 played -->
 			<td><div class="boxQ"><img id="30" src="ks.png" onclick="show('30');"  /></div></td><!-- card that can be picked up to declare trump-->
-			<td><div class="boxB"><img id="23" src="jc.png" onclick="show('23');"  /> </div></td><!-- card P4 played -->
+			<td><div class="boxB"><img id="24" src="jc.png" onclick="show('23');"  /> </div></td><!-- card P4 played -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxB"> <img id="8" src="back.png" onclick="show('8');" /> </div></td><!--P4's card -->
@@ -175,7 +175,7 @@
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"><span>Player 1</span></div></td><!-- player indicator -->
 			<td><div class="boxBlank"><span>< dealer</span></div></td><!-- indicates player is dealer -->
-			<td><div class="boxR"><img id="24" src="9h.png" onclick="show('24');"  /></div></td><!-- card P1 played -->
+			<td><div class="boxR"><img id="25" src="9h.png" onclick="show('24');"  /></div></td><!-- card P1 played -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
@@ -190,7 +190,7 @@
 			<td><div class="boxR"> <img id="18" src="js.png" onclick="show('18');"  /> </div></td><!-- P1's card-->
 			<td><div class="boxR"> <img id="19" src="qs.png" onclick="show('19');"  /> </div></td><!-- P1's card-->
 			<td><div class="boxR"> <img id="20" src="ks.png" onclick="show('20');"  /> </div></td><!-- P1's card-->
-			<td><div class="boxBlank"> </div></td>
+			<td><div class="boxBlank"><img id="21" src="ah.png" onclick="show('20');"  /> </div></td><!-- if the player wants to pick the card up it goes here-->
 			<td><div class="boxB"> <img id="10" src="back.png" onclick="show('10');" /> </div></td><!--P4's card -->
 		</tr>
             	<tr>
@@ -198,9 +198,11 @@
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td><!--these buttons all need an onclick function -->
-			<td><div class="boxBlank" id="41"><button type="button" onclick="">Hearts</button></div></td><!--suit option 1 -->
-			<td><div class="boxBlank" id="42"><button type="button" onclick="">Spades</button> </div></td><!--suit option 2 -->
-			<td><div class="boxBlank" id="43"><button type="button" onclick="">Clubs</button> </div></td><!--suit option 3 -->
+			<span id = "41">                      <!--titles on buttons subject to change -->
+				<td><div class="boxBlank" ><button type="button" onclick="">Hearts</button></div></td>
+				<td><div class="boxBlank" ><button type="button" onclick="">Spades</button> </div></td>
+				<td><div class="boxBlank" ><button type="button" onclick="">Clubs</button> </div></td>
+			</span>
 		</tr>
 	</table>
 	
