@@ -31,7 +31,7 @@
 		{
 		width: 72px;
 		padding: 2px;
-		border: 1px solid blue;
+		border: 1px solid red;
 		margin: 0px;
 		height: 15px;
 		}
@@ -39,7 +39,7 @@
 		{
 		width: 72px;
 		padding: 2px;
-		border: 1px solid red;
+		border: 1px solid blue;
 		margin: 0px;
 		height: 15px;
 		}
