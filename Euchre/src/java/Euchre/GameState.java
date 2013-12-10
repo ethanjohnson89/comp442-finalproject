@@ -24,6 +24,7 @@ public class GameState {
     public boolean[] isReady; // array of size 4, indicating whether the player has readied up
     
     public Card.Suit trumpSuit;
+    public int whoPickedTrump; // team #: 1 or 2
     public Card.Suit suitLead;
     
     public Stack<Card>[] playerHands;

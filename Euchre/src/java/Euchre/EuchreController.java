@@ -60,6 +60,7 @@ public class EuchreController extends HttpServlet {
                 gameState.playerNames = new String[4];
                 gameState.playerNames[0] = loginName;
                 session.setAttribute("loginName", loginName); // will be used to identify the player throughout the game
+                session.setAttribute("playerNumber", 1); // will be used to tell the player where he sits at the table
                 gameState.hasPlayed = new boolean[4];
                 gameState.isReady = new boolean[4];
                 gameState.isReady[0] = true;
@@ -99,6 +100,7 @@ public class EuchreController extends HttpServlet {
                 
                 gameState.playerNames[gameState.whoseTurn - 1] = loginName;
                 session.setAttribute("loginName", loginName);
+                session.setAttribute("playerNumber", new Integer(gameState.whoseTurn)); // will be used to tell the player where he sits at the table
                 gameState.isReady[gameState.whoseTurn - 1] = true;
                 gameState.whoseTurn++;
                 if(gameState.whoseTurn > 4) // filled all 4 spaces, continue to pick-up phase
@@ -302,6 +304,10 @@ public class EuchreController extends HttpServlet {
                     else if(choice.equals("clubs"))
                     {
                         gameState.trumpSuit = Card.Suit.CLUBS;
+                        if(gameState.whoseTurn == 1 || gameState.whoseTurn == 3)
+                            gameState.whoPickedTrump = 1;
+                        else
+                            gameState.whoPickedTrump = 2;
                         gameState.whoseTurn = gameState.dealer + 1;
                         if(gameState.whoseTurn > 4)
                             gameState.whoseTurn = 1;
@@ -311,6 +317,10 @@ public class EuchreController extends HttpServlet {
                     else if(choice.equals("diamonds"))
                     {
                         gameState.trumpSuit = Card.Suit.DIAMONDS;
+                        if(gameState.whoseTurn == 1 || gameState.whoseTurn == 3)
+                            gameState.whoPickedTrump = 1;
+                        else
+                            gameState.whoPickedTrump = 2;
                         gameState.whoseTurn = gameState.dealer + 1;
                         if(gameState.whoseTurn > 4)
                             gameState.whoseTurn = 1;
@@ -320,6 +330,10 @@ public class EuchreController extends HttpServlet {
                     else if(choice.equals("spades"))
                     {
                         gameState.trumpSuit = Card.Suit.SPADES;
+                        if(gameState.whoseTurn == 1 || gameState.whoseTurn == 3)
+                            gameState.whoPickedTrump = 1;
+                        else
+                            gameState.whoPickedTrump = 2;
                         gameState.whoseTurn = gameState.dealer + 1;
                         if(gameState.whoseTurn > 4)
                             gameState.whoseTurn = 1;
@@ -329,6 +343,10 @@ public class EuchreController extends HttpServlet {
                     else if(choice.equals("hearts"))
                     {
                         gameState.trumpSuit = Card.Suit.HEARTS;
+                        if(gameState.whoseTurn == 1 || gameState.whoseTurn == 3)
+                            gameState.whoPickedTrump = 1;
+                        else
+                            gameState.whoPickedTrump = 2;
                         gameState.whoseTurn = gameState.dealer + 1;
                         if(gameState.whoseTurn > 4)
                             gameState.whoseTurn = 1;
@@ -473,10 +491,20 @@ public class EuchreController extends HttpServlet {
                         if(gameState.team1TricksTaken + gameState.team2TricksTaken == 5) // hand is over, go to phase 6
                         {
                             gameState.phase = 6;
-                            if(gameState.team1TricksTaken > gameState.team2TricksTaken)
-                                gameState.team1Score++;
-                            else // there are no ties since there's an odd # of tricks in the hand
-                                gameState.team2Score++;
+                            if(gameState.whoPickedTrump == 1)
+                                if(gameState.team1TricksTaken == 5)
+                                    gameState.team1Score += 2;
+                                else if(gameState.team1TricksTaken < 3)
+                                    gameState.team2Score += 2; // team 1 has been euchred, give team 2 two points
+                                else
+                                    gameState.team1Score++;
+                            else
+                                if(gameState.team2TricksTaken == 5)
+                                    gameState.team2Score += 2;
+                                else if(gameState.team2TricksTaken < 3)
+                                    gameState.team1Score += 2; // team 2 has been euchred, give team 1 two points
+                                else
+                                    gameState.team2Score++;
                             gameState.team1TricksTaken = 0;
                             gameState.team2TricksTaken = 0;
                             
@@ -554,7 +582,41 @@ public class EuchreController extends HttpServlet {
                 }
                 else if(action.equals("readyUp")) // choice is not used
                 {
-                    
+                    if(gameState.phase == 5) // readying up for the next trick
+                    {
+                        gameState.isReady[gameState.whoseTurn - 1] = true;
+                        gameState.whoseTurn++;
+                        if(gameState.whoseTurn > 4)
+                            gameState.whoseTurn = 1;
+                        if(gameState.isReady[gameState.whoseTurn - 1]) // we've gone around the whole circle - continue to next trick (we've already shuffled and re-dealt above)
+                        {
+                            gameState.phase = 4;
+                            gameState.whoseTurn = gameState.dealer + 1;
+                            if(gameState.whoseTurn > 4)
+                                gameState.whoseTurn = 1;
+                        }
+                    }
+                    else if(gameState.phase == 6) // readying up for the next hand
+                    {
+                        gameState.isReady[gameState.whoseTurn - 1] = true;
+                        gameState.whoseTurn++;
+                        if(gameState.whoseTurn > 4)
+                            gameState.whoseTurn = 1;
+                        if(gameState.isReady[gameState.whoseTurn - 1]) // we've gone around the whole circle - continue to the next hand (we've already shuffled and re-dealt above)
+                        {
+                            gameState.phase = 4;
+                            gameState.whoseTurn = gameState.dealer + 1;
+                            if(gameState.whoseTurn > 4)
+                                gameState.whoseTurn = 1;
+                        }
+                    }
+                    else
+                    {
+                        PrintWriter out = response.getWriter();
+                        out.println("<error>cannotTakeThatActionNow</error>");
+                        out.close();
+                        return;
+                    }
                 }
             }
             
