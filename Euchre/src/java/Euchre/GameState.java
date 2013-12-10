@@ -2,7 +2,7 @@ package Euchre;
 
 // This class is used internally within EuchreController as a container for game-state variables.
 
-import java.util.Vector;
+import java.util.Stack;
 
 // All members are public since it's for internal consumption only (if this were C++ it'd be a struct),
 public class GameState {
@@ -23,8 +23,8 @@ public class GameState {
                                 // yet in this trick (or other trick-like action, such as picking the trump suit)
     public boolean[] isReady; // array of size 4, indicating whether the player has readied up
     
-    public Vector<Card> player1Hand, player2Hand, player3Hand, player4Hand;
-    public Vector<Card> discardPile;
+    public Stack<Card> player1Hand, player2Hand, player3Hand, player4Hand;
+    public Stack<Card> discardPile;
     public Card pickCard;
     public Card[] playedCards; // array of size 4 - cards currently out on the table (null element means spot is empty)
     

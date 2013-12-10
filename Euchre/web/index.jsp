@@ -20,10 +20,10 @@
         <h3>Enter your name to join the game:</h3>
         <form method="post" action="EuchreController">
             <input type="text" id="loginName" size="15" />
-            <input type="hidden" id="enterGame" />
+            <input type="hidden" id="enterGame" value="true" />
             <input type="submit" id="submitButton" />
         </form>
-        <p class="supertiny"><a href="EuchreController?resetEverything=true">Click here</a> to reset all game state and
-            allow a new game to be started if things get wonky</p>
+        <p class="supertiny"><a href="EuchreController?resetEverything=true">Click here</a> to reset all game state data and
+            allow a new game to be started if things get wonky. (Use with caution!)</p>
     </body>
 </html>
