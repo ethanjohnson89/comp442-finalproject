@@ -96,12 +96,12 @@
 				<td><div class="box3">  </div></td>
 				<td><div class="box3"> </div></td>
 				<td><div class="box3">  </div></td>
-                                <td><div class="boxT1"><span id="topBottomTeam">Team 1</span></div></td>
-                                <td><div class="box3"><span id="team1TrumpYes">Trump</span></div></td><!-- indicates team one called trump -->
+                                <td><div class="boxT1" id="topBottomTeam">Team 1</div></td>
+                                <td><div class="box3" id="team1TrumpYes">Trump</div></td><!-- indicates team one called trump -->
 				<td><div class="box3">  </div></td>
 				<td><div class="box3">  </div></td>
-                                <td><div class="boxT2"><span id="leftRightTeam">Team 2</span></div></td>
-                                <td><div class="box3"><span id="team2TrumpYes">Trump</span></div></td><!-- indicates team two called trump  -->
+                                <td><div class="boxT2" id="leftRightTeam">Team 2</div></td>
+                                <td><div class="box3" id="team2TrumpYes">Trump</div></td><!-- indicates team two called trump  -->
 				<td><div class="box3"> </div></td>
 				<td><div class="box3">  </div></td>
 			</tr>
@@ -110,26 +110,26 @@
 				<td><div class="box3">  </div></td>
 				<td><div class="box3">  </div></td>
                                 <td><div class="boxT1">Score:  <span id="topBottomScore"></span></div></td>
-                                <td><div class="box3"><span id="team1TrumpInd">Suit 1</span></div></td><!-- indicates the trump suit for team one -->
+                                <td><div class="box3" id="team1TrumpInd">Suit 1</div></td><!-- indicates the trump suit for team one -->
 				<td><div class="box3">  </div></td>
 				<td><div class="box3">  </div></td>
                                 <td><div class="boxT2">Score: <span id="leftRightScore"></span></div></td>
-                                <td><div class="box3"><span id="team2TrumpInd">Suit2</span></div></td><!-- indicates the trump suit for team two-->
+                                <td><div class="box3" id="team2TrumpInd">Suit2</div></td><!-- indicates the trump suit for team two-->
 				<td><div class="box3"> </div></td>
 				<td><div class="box3">  </div></td>
 			</tr>
 			<tr>
 				<td><div class="box3">  </div></td>
-                                <td><div class="box3"><span id="left_name">Player 2</span></div></td><!-- player indicator -->
-                                <td><div class="box3"><span id="left_dealer"> < dealer </span></div></td><!-- indicates player is dealer -->
+                                <td><div class="box3" id="left_name">Player 2</div></td><!-- player indicator -->
+                                <td><div class="box3" id="left_dealer"> < dealer </div></td><!-- indicates player is dealer -->
                                 <td><div class="boxT1">tricks: <span id="topBottomTricks"></span></div></td><!-- number of tricks team one has taken -->
 				<td><div class="box3"> </div></td>
-                                <td><div class="box3"><span id="top_name">Player 3</span></div></td><!-- player indicator -->
-                                <td><div class="box3"><span id="top_dealer"> < dealer </span></div></td><!-- indicates player is dealer -->
+                                <td><div class="box3" id="top_name">Player 3</div></td><!-- player indicator -->
+                                <td><div class="box3" id="top_dealer"> < dealer </div></td><!-- indicates player is dealer -->
                                 <td><div class="boxT2">tricks: <span id="leftRightTricks"></span></div></td><!-- number of tricks team two has taken -->
 				<td><div class="box3">  </div></td>
-                                <td><div class="box3"><span id="right_name">Player 4</span></div></td><!-- player indicator -->
-                                <td><div class="box3"><span id="right_dealer"> < dealer </span></div></td><!-- indicates player is dealer -->
+                                <td><div class="box3" id="right_name">Player 4</div></td><!-- player indicator -->
+                                <td><div class="box3" id="right_dealer"> < dealer </div></td><!-- indicates player is dealer -->
 			</tr>
 		</table>
 	<table> <!-- shift all of them down one row -->
@@ -173,8 +173,8 @@
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxB" id="left_card4"></div></td><!--P2's card -->
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxBlank"><span id="bottom_name">Player 1</span></div></td><!-- player indicator -->
-			<td><div class="boxBlank"><span id="bottom_dealer">< dealer</span></div></td><!-- indicates player is dealer -->
+                        <td><div class="boxBlank" id="bottom_name"><span class="spanOne">Player 1<span></div></td><!-- player indicator -->
+                                        <td><div class="boxBlank" id="bottom_dealer"><span class="spanOne">< dealer</span></div></td><!-- indicates player is dealer -->
 			<td><div class="boxR" id="bottom_cardplayed"></div></td><!-- card P1 played -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
