@@ -207,12 +207,12 @@
             	<tr>
 			<td><div class="boxBlank2"> </div></td>
 			<td><div class="boxBlank2"> </div></td>
-			<td><div class="boxBlank2"> </div></td>
 			<td><div class="boxBlank2"> </div></td><!--these buttons all need an onclick function -->
 			<!--<span id = "41">                      <!--titles on buttons subject to change -->
 				<td><div class="boxBlank2" class="pickSuit" ><button type="button" onclick="doAjaxRequest('pickTrump', 'hearts');">Hearts</button></div></td>
 				<td><div class="boxBlank2" class="pickSuit" ><button type="button" onclick="doAjaxRequest('pickTrump', 'spades');">Spades</button> </div></td>
 				<td><div class="boxBlank2" class="pickSuit" ><button type="button" onclick="doAjaxRequest('pickTrump', 'clubs');">Clubs</button> </div></td>
+                                <td><div class="boxBlank2" class="pickSuit" ><button type="button" onclick="doAjaxRequest('pickTrump', 'diamonds');">Diamonds</button> </div></td>
                                 <td><div class="boxBlank2" class="pickSuit" ><button type="button" onclick="doAjaxRequest('pickTrump', 'pass');">Pass</button> </div></td>
 			<!--</span> -->
 		</tr>

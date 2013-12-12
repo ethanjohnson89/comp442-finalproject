@@ -200,6 +200,7 @@ public class EuchreController extends HttpServlet {
                     {
                         gameState.phase = 2; // the dealer now needs to choose a discard
                         gameState.trumpSuit = gameState.pickCard.getSuit();
+                        gameState.whoPickedTrump = gameState.whoseTurn;
                         gameState.whoseTurn = gameState.dealer;
                         gameState.playerHands.get(gameState.dealer - 1).push(gameState.pickCard);
                         gameState.pickCard = null;
@@ -219,6 +220,8 @@ public class EuchreController extends HttpServlet {
                             for(int i = 0; i < 4; i++)
                                 gameState.hasPlayed[i] = false;
                             gameState.hasPlayed[gameState.dealer - 1] = true; // dealer does not participate in trump selection phase
+                            gameState.discardPile.push(gameState.pickCard);
+                            gameState.pickCard = null;
                         }
                     }
                     else // invalid choice
@@ -285,6 +288,7 @@ public class EuchreController extends HttpServlet {
                     }
                     else if(choice.equals("clubs"))
                     {
+                        gameState.phase = 4;
                         gameState.trumpSuit = Card.Suit.CLUBS;
                         if(gameState.whoseTurn == 1 || gameState.whoseTurn == 3)
                             gameState.whoPickedTrump = 1;
@@ -298,6 +302,7 @@ public class EuchreController extends HttpServlet {
                     }
                     else if(choice.equals("diamonds"))
                     {
+                        gameState.phase = 4;
                         gameState.trumpSuit = Card.Suit.DIAMONDS;
                         if(gameState.whoseTurn == 1 || gameState.whoseTurn == 3)
                             gameState.whoPickedTrump = 1;
@@ -311,6 +316,7 @@ public class EuchreController extends HttpServlet {
                     }
                     else if(choice.equals("spades"))
                     {
+                        gameState.phase = 4;
                         gameState.trumpSuit = Card.Suit.SPADES;
                         if(gameState.whoseTurn == 1 || gameState.whoseTurn == 3)
                             gameState.whoPickedTrump = 1;
@@ -324,6 +330,7 @@ public class EuchreController extends HttpServlet {
                     }
                     else if(choice.equals("hearts"))
                     {
+                        gameState.phase = 4;
                         gameState.trumpSuit = Card.Suit.HEARTS;
                         if(gameState.whoseTurn == 1 || gameState.whoseTurn == 3)
                             gameState.whoPickedTrump = 1;
@@ -420,7 +427,7 @@ public class EuchreController extends HttpServlet {
                             {
                                 // The card is not of the suit that was lead, but it might still be OK if the player doesn't
                                 // have any cards of the suit lead.
-                                boolean hasCardOfSuitLead = true;
+                                boolean hasCardOfSuitLead = false;
                                 for(int i = 0; i < gameState.playerHands.get(gameState.whoseTurn - 1).size(); i++)
                                     if(gameState.playerHands.get(gameState.whoseTurn - 1).get(i).getSuit() == gameState.suitLead)
                                     {

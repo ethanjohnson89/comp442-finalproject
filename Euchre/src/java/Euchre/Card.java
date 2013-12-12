@@ -75,7 +75,7 @@ public class Card {
         this.imgFileName = imgFileName;
         if(imgFileName.length() == 3)
         {
-            faceValue = Integer.parseInt(imgFileName.substring(0, 1));
+            faceValue = Integer.parseInt(imgFileName.substring(0, 2));
             switch(imgFileName.charAt(2))
             {
                 case 'c':
@@ -135,7 +135,7 @@ public class Card {
             }
             else
             {
-                faceValue = Integer.parseInt(imgFileName.substring(0,0));
+                faceValue = Integer.parseInt(imgFileName.substring(0,1));
                 switch(imgFileName.charAt(1))
                 {
                     case 'c':
