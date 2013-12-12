@@ -149,6 +149,7 @@ function updateGameState(connection)
         var errorNode = responseXMLRoot.getElementsByTagName("error")[0];
         if(errorNode)
         {
+            window.setTimeout(function() { doAjaxRequest("", ""); }, 1500);
             console.log("Error: " + errorNode.childNode[0]);
             return;
         }
@@ -229,7 +230,7 @@ function updateGameState(connection)
         
         if(playerNodes[0].getElementsByTagName("hasTurn")[0])
             whoseTurn = 1;
-        else if(playerNodes[1].getElementsByTagName("hasTurn"[0]))
+        else if(playerNodes[1].getElementsByTagName("hasTurn")[0])
             whoseTurn = 3;
         else if(playerNodes[2].getElementsByTagName("hasTurn")[0])
             whoseTurn = 2;
@@ -331,6 +332,8 @@ function updateGameState(connection)
         var leftNewCards = playerNodes[leftPlayerIndex].getElementsByTagName("handCard");
         for(index = 0; index < leftNewCards.length; index++)
         {
+            if(index >= 5)
+                break;
             var imgFileName = leftNewCards[index].getElementsByTagName("imgFileName")[0].childNodes[0].data;
             
             var img = left_cards[index].children[0];
@@ -352,6 +355,8 @@ function updateGameState(connection)
         var topNewCards = playerNodes[topPlayerIndex].getElementsByTagName("handCard");
         for(index = 0; index < topNewCards.length; index++)
         {
+            if(index >= 5)
+                break;
             var imgFileName = topNewCards[index].getElementsByTagName("imgFileName")[0].childNodes[0].data;
             
             var img = top_cards[index].children[0];
@@ -373,6 +378,8 @@ function updateGameState(connection)
         var rightNewCards = playerNodes[rightPlayerIndex].getElementsByTagName("handCard");
         for(index = 0; index < rightNewCards.length; index++)
         {
+            if(index >= 5)
+                break;
             var imgFileName = rightNewCards[index].getElementsByTagName("imgFileName")[0].childNodes[0].data;
             
             var img = right_cards[index].children[0];
@@ -410,6 +417,12 @@ function updateGameState(connection)
             
             img.setAttribute("src", "img/" + imgFileName + ".png");
         }
+        else
+        {
+            var img = bottom_card_played.children[0];
+            if(img)
+                bottom_card_played.removeChild(img);
+        }
         if(leftPlayedCard)
         {
             var imgFileName = leftPlayedCard.getElementsByTagName("imgFileName")[0].childNodes[0].data;
@@ -423,6 +436,12 @@ function updateGameState(connection)
             }
             
             img.setAttribute("src", "img/" + imgFileName + ".png");
+        }
+        else
+        {
+            var img = left_card_played.children[0];
+            if(img)
+                left_card_played.removeChild(img);
         }
         if(topPlayedCard)
         {
@@ -438,6 +457,12 @@ function updateGameState(connection)
             
             img.setAttribute("src", "img/" + imgFileName + ".png");
         }
+        else
+        {
+            var img = top_card_played.children[0];
+            if(img)
+                top_card_played.removeChild(img);
+        }
         if(rightPlayedCard)
         {
             var imgFileName = rightPlayedCard.getElementsByTagName("imgFileName")[0].childNodes[0].data;
@@ -452,6 +477,12 @@ function updateGameState(connection)
             
             img.setAttribute("src", "img/" + imgFileName + ".png");
         }
+        else
+        {
+            var img = right_card_played.children[0];
+            if(img)
+               right_card_played.removeChild(img);
+        }
         if(pickCard)
         {
             var imgFileName = pickCard.getElementsByTagName("imgFileName")[0].childNodes[0].data;
@@ -465,6 +496,12 @@ function updateGameState(connection)
             }
             
             img.setAttribute("src", "img/" + imgFileName + ".png");
+        }
+        else
+        {
+            var img = pickCardNode.children[0];
+            if(img)
+                pickCardNode.removeChild(img);
         }
         
         // Main game logic

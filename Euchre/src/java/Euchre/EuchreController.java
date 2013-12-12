@@ -229,51 +229,10 @@ public class EuchreController extends HttpServlet {
                         return;
                     }
                 }
-                else if(action.equals("discard") && choice != null) // choice should be a card imgName
+                /*else if(action.equals("discard") && choice != null) // choice should be a card imgName
                 {
-                    if(gameState.phase != 2)
-                    {
-                        PrintWriter out = response.getWriter();
-                        out.println("<error>cannotTakeThatActionNow</error>");
-                        out.close();
-                        return;
-                    }
                     
-                    Card toDiscard;
-                    try { toDiscard = new Card(choice); }
-                    catch (Exception e)
-                    {
-                        PrintWriter out = response.getWriter();
-                        out.println("<error>invalidCard</error>");
-                        out.close();
-                        return;
-                    }
-                    
-                    int indexToDiscard = 0;
-                    for(; indexToDiscard < gameState.playerHands.get(gameState.whoseTurn - 1).size(); indexToDiscard++)
-                        if(toDiscard.equals(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToDiscard)))
-                            break;
-                    if(indexToDiscard >= gameState.playerHands.get(gameState.whoseTurn - 1).size())
-                    {
-                        PrintWriter out = response.getWriter();
-                        out.println("<error>invalidCard</error>");
-                        out.close();
-                        return;
-                    }
-                    
-                    // Discard the selected card, and put the pick card in its place in the dealer's hand
-                    gameState.discardPile.push(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToDiscard));
-                    gameState.playerHands.get(gameState.whoseTurn - 1).set(indexToDiscard, gameState.pickCard);
-                    gameState.pickCard = null;
-                    
-                    // Proceed to phase 4 (trump suit has already been picked, so skip phase 3)
-                    gameState.phase = 4;
-                    gameState.whoseTurn = gameState.dealer + 1;
-                    if(gameState.whoseTurn > 4)
-                        gameState.whoseTurn = 1;
-                    for(int i = 0; i < 4; i++)
-                        gameState.hasPlayed[i] = false;
-                }
+                }*/
                 else if(action.equals("pickTrump") && choice != null) // choice should be a suit name (lowercase) or "pass"
                 {
                     if(gameState.phase != 3)
@@ -384,157 +343,224 @@ public class EuchreController extends HttpServlet {
                         return;
                     }
                 }
-                else if(action.equals("playCard") && choice != null) // choice should be a card imgName
-                {
-                    if(gameState.phase != 4)
+                else if((action.equals("playCard") || action.equals("discard")) && choice != null) // choice should be a card imgName
+                {                    
+                    if(gameState.phase == 2)
                     {
-                        PrintWriter out = response.getWriter();
-                        out.println("<error>cannotTakeThatActionNow</error>");
-                        out.close();
-                        return;
-                    }
-                    
-                    Card toPlay;
-                    try { toPlay = new Card(choice); }
-                    catch (Exception e)
-                    {
-                        PrintWriter out = response.getWriter();
-                        out.println("<error>invalidCard</error>");
-                        out.close();
-                        return;
-                    }
-                    
-                    int indexToPlay = 0;
-                    for(; indexToPlay < gameState.playerHands.get(gameState.whoseTurn - 1).size(); indexToPlay++)
-                        if(toPlay.equals(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToPlay)))
-                            break;
-                    if(indexToPlay >= gameState.playerHands.get(gameState.whoseTurn - 1).size())
-                    {
-                        PrintWriter out = response.getWriter();
-                        out.println("<error>invalidCard</error>");
-                        out.close();
-                        return;
-                    }
-                    
-                    // We know that the card is in the player's hand; now make sure it follows suit (if applicable).
-                    boolean isLeader = true;
-                    for(int i = 0; i < 4; i++)
-                        if(gameState.playedCards[i] != null)
-                            isLeader = false;
-                    if(isLeader)
-                        gameState.suitLead = gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToPlay).getSuit();
-                    else
-                    {
-                        if(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToPlay).getSuit() != gameState.suitLead)
-                        {
-                            // The card is not of the suit that was lead, but it might still be OK if the player doesn't
-                            // have any cards of the suit lead.
-                            boolean hasCardOfSuitLead = true;
-                            for(int i = 0; i < gameState.playerHands.get(gameState.whoseTurn - 1).size(); i++)
-                                if(gameState.playerHands.get(gameState.whoseTurn - 1).get(i).getSuit() == gameState.suitLead)
-                                {
-                                    hasCardOfSuitLead = true;
-                                    break;
-                                }
-                            if(hasCardOfSuitLead)
-                            {
-                                PrintWriter out = response.getWriter();
-                                out.println("<error>invalidCard</error>");
-                                out.close();
-                                return;
-                            }
-                        }
-                    }
-                    
-                    // The card can be played, so we wil do so.
-                    gameState.playedCards[gameState.whoseTurn - 1] = gameState.playerHands.get(gameState.whoseTurn - 1).remove(indexToPlay);
-                    gameState.hasPlayed[gameState.whoseTurn - 1] = true;
-                    gameState.whoseTurn++;
-                    if(gameState.whoseTurn > 4)
-                        gameState.whoseTurn = 1;
-                    if(gameState.hasPlayed[gameState.whoseTurn - 1]) // we've gone around the whole circle - score the trick and start the next one
-                    {
-                        Card.Suit nextSuit; // the suit with the same color as the trump suit (whose jack is promoted)
-                        switch(gameState.trumpSuit)
-                        {
-                            case CLUBS:
-                                nextSuit = Card.Suit.SPADES;
-                                break;
-                            case DIAMONDS:
-                                nextSuit = Card.Suit.HEARTS;
-                                break;
-                            case SPADES:
-                                nextSuit = Card.Suit.CLUBS;
-                                break;
-                            default:
-                                nextSuit = Card.Suit.DIAMONDS;
-                        }
-                        
-                        Card winningCard = gameState.playedCards[0];
-                        for(int i = 1; i < 4; i++)
-                        {
-                            if(gameState.playedCards[i].getFaceValue() == 11)
-                            {
-                                if(gameState.playedCards[i].getSuit() == gameState.trumpSuit)
-                                    winningCard = gameState.playedCards[i];
-                                else if(gameState.playedCards[i].getSuit() == nextSuit && winningCard.getSuit() != gameState.trumpSuit)
-                                    winningCard = gameState.playedCards[i];
-                            }
-                            else if(gameState.playedCards[i].getSuit() == gameState.trumpSuit)
-                            {
-                                if(winningCard.getSuit() != gameState.trumpSuit && !(winningCard.getSuit() == nextSuit && winningCard.getFaceValue() == 11))
-                                    winningCard = gameState.playedCards[i];
-                            }
-                            else if(gameState.playedCards[i].getFaceValue() > winningCard.getFaceValue())
-                                winningCard = gameState.playedCards[i];
-                            else if(gameState.playedCards[i].getSuit() == gameState.suitLead && winningCard.getSuit() != gameState.suitLead)
-                                winningCard = gameState.playedCards[i];
-                            else if(gameState.playedCards[i].getSuit() == gameState.suitLead && winningCard.getSuit() == gameState.suitLead)
-                                if(gameState.playedCards[i].getFaceValue() > winningCard.getFaceValue())
-                                    winningCard = gameState.playedCards[i];
-                        }
-                        
-                        int winningPlayer = 0;
-                        for(; winningPlayer < 4; winningPlayer++)
-                            if(gameState.playedCards[winningPlayer].equals(winningCard))
-                                break;
-                        if(winningPlayer > 4)
+                        Card toDiscard;
+                        try { toDiscard = new Card(choice); }
+                        catch (Exception e)
                         {
                             PrintWriter out = response.getWriter();
-                            out.println("<error>Something terribly wrong happened here.</error>");
+                            out.println("<error>invalidCard</error>");
                             out.close();
                             return;
                         }
-                        
-                        if(winningPlayer % 2 != 0) // winner is on 1-3 team (team 1)
-                            gameState.team1TricksTaken++;
-                        else // winner is on 2-4 team (team 2)
-                            gameState.team2TricksTaken++;
-                        
-                        if(gameState.team1TricksTaken + gameState.team2TricksTaken == 5) // hand is over, go to phase 6
+
+                        int indexToDiscard = 0;
+                        for(; indexToDiscard < gameState.playerHands.get(gameState.whoseTurn - 1).size(); indexToDiscard++)
+                            if(toDiscard.equals(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToDiscard)))
+                                break;
+                        if(indexToDiscard >= gameState.playerHands.get(gameState.whoseTurn - 1).size())
                         {
-                            gameState.phase = 6;
-                            if(gameState.whoPickedTrump == 1)
-                                if(gameState.team1TricksTaken == 5)
-                                    gameState.team1Score += 2;
-                                else if(gameState.team1TricksTaken < 3)
-                                    gameState.team2Score += 2; // team 1 has been euchred, give team 2 two points
-                                else
-                                    gameState.team1Score++;
-                            else
-                                if(gameState.team2TricksTaken == 5)
-                                    gameState.team2Score += 2;
-                                else if(gameState.team2TricksTaken < 3)
-                                    gameState.team1Score += 2; // team 2 has been euchred, give team 1 two points
-                                else
-                                    gameState.team2Score++;
-                            gameState.team1TricksTaken = 0;
-                            gameState.team2TricksTaken = 0;
-                            
-                            if(gameState.team1Score == 10 && gameState.team2Score == 10) // game is over, go to phase 7
-                                gameState.phase = 7; // immediately freezes the game, so no need to change anything else
-                            else
+                            PrintWriter out = response.getWriter();
+                            out.println("<error>invalidCard</error>");
+                            out.close();
+                            return;
+                        }
+
+                        // Discard the selected card, and put the pick card in its place in the dealer's hand
+                        gameState.discardPile.push(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToDiscard));
+                        //gameState.playerHands.get(gameState.whoseTurn - 1).set(indexToDiscard, gameState.pickCard);
+                        gameState.playerHands.get(gameState.whoseTurn - 1).remove(indexToDiscard);
+                        gameState.pickCard = null;
+
+                        // Proceed to phase 4 (trump suit has already been picked, so skip phase 3)
+                        gameState.phase = 4;
+                        gameState.whoseTurn = gameState.dealer + 1;
+                        if(gameState.whoseTurn > 4)
+                            gameState.whoseTurn = 1;
+                        for(int i = 0; i < 4; i++)
+                            gameState.hasPlayed[i] = false;
+                    }
+                    else if(gameState.phase == 4)
+                    {
+                        Card toPlay;
+                        try { toPlay = new Card(choice); }
+                        catch (Exception e)
+                        {
+                            PrintWriter out = response.getWriter();
+                            out.println("<error>invalidCard</error>");
+                            out.close();
+                            return;
+                        }
+
+                        int indexToPlay = 0;
+                        for(; indexToPlay < gameState.playerHands.get(gameState.whoseTurn - 1).size(); indexToPlay++)
+                            if(toPlay.equals(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToPlay)))
+                                break;
+                        if(indexToPlay >= gameState.playerHands.get(gameState.whoseTurn - 1).size())
+                        {
+                            PrintWriter out = response.getWriter();
+                            out.println("<error>invalidCard</error>");
+                            out.close();
+                            return;
+                        }
+
+                        // We know that the card is in the player's hand; now make sure it follows suit (if applicable).
+                        boolean isLeader = true;
+                        for(int i = 0; i < 4; i++)
+                            if(gameState.playedCards[i] != null)
+                                isLeader = false;
+                        if(isLeader)
+                            gameState.suitLead = gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToPlay).getSuit();
+                        else
+                        {
+                            if(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToPlay).getSuit() != gameState.suitLead)
                             {
+                                // The card is not of the suit that was lead, but it might still be OK if the player doesn't
+                                // have any cards of the suit lead.
+                                boolean hasCardOfSuitLead = true;
+                                for(int i = 0; i < gameState.playerHands.get(gameState.whoseTurn - 1).size(); i++)
+                                    if(gameState.playerHands.get(gameState.whoseTurn - 1).get(i).getSuit() == gameState.suitLead)
+                                    {
+                                        hasCardOfSuitLead = true;
+                                        break;
+                                    }
+                                if(hasCardOfSuitLead)
+                                {
+                                    PrintWriter out = response.getWriter();
+                                    out.println("<error>invalidCard</error>");
+                                    out.close();
+                                    return;
+                                }
+                            }
+                        }
+
+                        // The card can be played, so we wil do so.
+                        gameState.playedCards[gameState.whoseTurn - 1] = gameState.playerHands.get(gameState.whoseTurn - 1).remove(indexToPlay);
+                        gameState.hasPlayed[gameState.whoseTurn - 1] = true;
+                        gameState.whoseTurn++;
+                        if(gameState.whoseTurn > 4)
+                            gameState.whoseTurn = 1;
+                        if(gameState.hasPlayed[gameState.whoseTurn - 1]) // we've gone around the whole circle - score the trick and start the next one
+                        {
+                            Card.Suit nextSuit; // the suit with the same color as the trump suit (whose jack is promoted)
+                            switch(gameState.trumpSuit)
+                            {
+                                case CLUBS:
+                                    nextSuit = Card.Suit.SPADES;
+                                    break;
+                                case DIAMONDS:
+                                    nextSuit = Card.Suit.HEARTS;
+                                    break;
+                                case SPADES:
+                                    nextSuit = Card.Suit.CLUBS;
+                                    break;
+                                default:
+                                    nextSuit = Card.Suit.DIAMONDS;
+                            }
+
+                            Card winningCard = gameState.playedCards[0];
+                            for(int i = 1; i < 4; i++)
+                            {
+                                if(gameState.playedCards[i].getFaceValue() == 11)
+                                {
+                                    if(gameState.playedCards[i].getSuit() == gameState.trumpSuit)
+                                        winningCard = gameState.playedCards[i];
+                                    else if(gameState.playedCards[i].getSuit() == nextSuit && winningCard.getSuit() != gameState.trumpSuit)
+                                        winningCard = gameState.playedCards[i];
+                                }
+                                else if(gameState.playedCards[i].getSuit() == gameState.trumpSuit)
+                                {
+                                    if(winningCard.getSuit() != gameState.trumpSuit && !(winningCard.getSuit() == nextSuit && winningCard.getFaceValue() == 11))
+                                        winningCard = gameState.playedCards[i];
+                                }
+                                else if(gameState.playedCards[i].getFaceValue() > winningCard.getFaceValue())
+                                    winningCard = gameState.playedCards[i];
+                                else if(gameState.playedCards[i].getSuit() == gameState.suitLead && winningCard.getSuit() != gameState.suitLead)
+                                    winningCard = gameState.playedCards[i];
+                                else if(gameState.playedCards[i].getSuit() == gameState.suitLead && winningCard.getSuit() == gameState.suitLead)
+                                    if(gameState.playedCards[i].getFaceValue() > winningCard.getFaceValue())
+                                        winningCard = gameState.playedCards[i];
+                            }
+
+                            int winningPlayer = 0;
+                            for(; winningPlayer < 4; winningPlayer++)
+                                if(gameState.playedCards[winningPlayer].equals(winningCard))
+                                    break;
+                            if(winningPlayer > 4)
+                            {
+                                PrintWriter out = response.getWriter();
+                                out.println("<error>Something terribly wrong happened here.</error>");
+                                out.close();
+                                return;
+                            }
+
+                            if(winningPlayer % 2 != 0) // winner is on 1-3 team (team 1)
+                                gameState.team1TricksTaken++;
+                            else // winner is on 2-4 team (team 2)
+                                gameState.team2TricksTaken++;
+
+                            if(gameState.team1TricksTaken + gameState.team2TricksTaken == 5) // hand is over, go to phase 6
+                            {
+                                gameState.phase = 6;
+                                if(gameState.whoPickedTrump == 1)
+                                    if(gameState.team1TricksTaken == 5)
+                                        gameState.team1Score += 2;
+                                    else if(gameState.team1TricksTaken < 3)
+                                        gameState.team2Score += 2; // team 1 has been euchred, give team 2 two points
+                                    else
+                                        gameState.team1Score++;
+                                else
+                                    if(gameState.team2TricksTaken == 5)
+                                        gameState.team2Score += 2;
+                                    else if(gameState.team2TricksTaken < 3)
+                                        gameState.team1Score += 2; // team 2 has been euchred, give team 1 two points
+                                    else
+                                        gameState.team2Score++;
+                                gameState.team1TricksTaken = 0;
+                                gameState.team2TricksTaken = 0;
+
+                                if(gameState.team1Score == 10 && gameState.team2Score == 10) // game is over, go to phase 7
+                                    gameState.phase = 7; // immediately freezes the game, so no need to change anything else
+                                else
+                                {
+                                    gameState.dealer++;
+                                    if(gameState.dealer > 4)
+                                        gameState.dealer = 1;
+                                    gameState.whoseTurn = gameState.dealer + 1;
+                                    if(gameState.whoseTurn > 4)
+                                        gameState.whoseTurn = 1;
+                                    for(int i = 0; i < 4; i++)
+                                    {
+                                        gameState.hasPlayed[i] = false;
+                                        gameState.isReady[i] = false;
+                                    }
+
+                                    // Reshuffle and deal deck
+                                    for(int i = 0; i < 4; i++)
+                                        while(!gameState.playerHands.get(i).empty())
+                                            gameState.discardPile.push(gameState.playerHands.get(i).pop());
+                                    for(int i = 0; i < 4; i++)
+                                        if(gameState.playedCards[i] != null)
+                                        {
+                                            gameState.discardPile.push(gameState.playedCards[i]);
+                                            gameState.playedCards[i] = null;
+                                        }
+                                    gameState.discardPile.push(gameState.pickCard);
+                                    gameState.pickCard = null;
+
+                                    Collections.shuffle(gameState.discardPile);
+                                    for(int i = 0; i < 5; i++) // deal 5 cards to each player
+                                        for(int j = 0; j < 4; j++)
+                                            gameState.playerHands.get(j).add(gameState.discardPile.pop());
+                                    gameState.pickCard = gameState.discardPile.pop();
+                                }
+                            }
+                            else // trick is over, go to phase 5
+                            {
+                                gameState.phase = 5;
                                 gameState.dealer++;
                                 if(gameState.dealer > 4)
                                     gameState.dealer = 1;
@@ -567,40 +593,13 @@ public class EuchreController extends HttpServlet {
                                 gameState.pickCard = gameState.discardPile.pop();
                             }
                         }
-                        else // trick is over, go to phase 5
-                        {
-                            gameState.phase = 5;
-                            gameState.dealer++;
-                            if(gameState.dealer > 4)
-                                gameState.dealer = 1;
-                            gameState.whoseTurn = gameState.dealer + 1;
-                            if(gameState.whoseTurn > 4)
-                                gameState.whoseTurn = 1;
-                            for(int i = 0; i < 4; i++)
-                            {
-                                gameState.hasPlayed[i] = false;
-                                gameState.isReady[i] = false;
-                            }
-                            
-                            // Reshuffle and deal deck
-                            for(int i = 0; i < 4; i++)
-                                while(!gameState.playerHands.get(i).empty())
-                                    gameState.discardPile.push(gameState.playerHands.get(i).pop());
-                            for(int i = 0; i < 4; i++)
-                                if(gameState.playedCards[i] != null)
-                                {
-                                    gameState.discardPile.push(gameState.playedCards[i]);
-                                    gameState.playedCards[i] = null;
-                                }
-                            gameState.discardPile.push(gameState.pickCard);
-                            gameState.pickCard = null;
-                            
-                            Collections.shuffle(gameState.discardPile);
-                            for(int i = 0; i < 5; i++) // deal 5 cards to each player
-                                for(int j = 0; j < 4; j++)
-                                    gameState.playerHands.get(j).add(gameState.discardPile.pop());
-                            gameState.pickCard = gameState.discardPile.pop();
-                        }
+                    }
+                    else
+                    {
+                        PrintWriter out = response.getWriter();
+                        out.println("<error>cannotTakeThatActionNow</error>");
+                        out.close();
+                        return;
                     }
                 }
                 else if(action.equals("readyUp")) // choice is not used
