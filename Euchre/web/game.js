@@ -47,7 +47,6 @@ var globalResponseXML;
 // by comparing them with the latest ones sent by the server.
 var whoseTurn; // 1, 2, 3, or 4
 var dealer;
-var respondToCardClick; // boolean
 
 function init()
 {
@@ -118,7 +117,6 @@ function init()
     infoNode = document.getElementById("info");
     
     // init value globals
-    respondToCardClick = false;
     
     doAjaxRequest("", "");
 }
@@ -267,9 +265,10 @@ function updateGameState(connection)
             rightDealerInd.style.display = "block";
         
         readyButtonSpan.style.display = "none";
-        suitSelectButtonsSpan.style.display = "none";
-        pickUpButtonsSpan.style.display = "none";
-        respondToCardClick = false;
+        //suitSelectButtonsSpan.style.display = "none";
+        hidePickSuit();
+        //pickUpButtonsSpan.style.display = "none";
+        hidePickUp();
         
         // Update scores and # of tricks taken
         var team1Score = Number(teamNodes[0].getElementsByTagName("score")[0].childNodes[0].data);
@@ -291,7 +290,7 @@ function updateGameState(connection)
             topBottomScore = team2Score;
             leftRightScore = team1Score;
             topBottomTricks = team2Tricks;
-            leftRighttricks = team1Tricks;
+            leftRightTricks = team1Tricks;
             topBottomTeamInd.childNodes[0].data = "Team 2";
             leftRightTeamInd.childNodes[0].data = "Team 1";
         }
@@ -301,7 +300,174 @@ function updateGameState(connection)
         leftRightTricksInd.childNodes[0].data = "Tricks: " + leftRightTricks;
         
         // TODO: display current cards on screen and update trump indicators
+        var bottomNewCards = playerNodes[yourPlayerIndex].getElementsByTagName("handCard");
+        var index;
+        for(var index = 0; index < bottomNewCards.length; index++)
+        {
+            var imgFileName = bottomNewCards[index].getElementsByTagName("imgFileName")[0].childNodes[0].data;
+            
+            var img = bottom_cards[index].children[0];
+            if(!img)
+            {
+                img = document.createElement("img");
+                img.setAttribute("class", "cardImg");
+                bottom_cards[index].appendChild(img);
+            }
+            
+            img.setAttribute("src", "img/" + imgFileName + ".png");
+            // It's safe to not check whether the card is playable before sending the AJAX, because the server will simply
+            // ignore any invalid moves. Since we're not immediately removing the card from the screen when it's clicked
+            // (rather, it will be removed when the server responds, sending down the fresh game state where this card
+            // is no longer in the player's hand), an incorrect move will not cause any weird behavior for the user
+            // either - simply nothing will happen, which is what we want.
+            img.setAttribute("onclick", "doAjaxRequest('playCard', '" + imgFileName + "');");
+        }
+        for(; index < 6; index++)
+        {
+            var img = bottom_cards[index].children[0];
+            if(img)
+                bottom_cards[index].removeChild(img);
+        }
+        var leftNewCards = playerNodes[leftPlayerIndex].getElementsByTagName("handCard");
+        for(index = 0; index < leftNewCards.length; index++)
+        {
+            var imgFileName = leftNewCards[index].getElementsByTagName("imgFileName")[0].childNodes[0].data;
+            
+            var img = left_cards[index].children[0];
+            if(!img)
+            {
+                img = document.createElement("img");
+                img.setAttribute("class", "cardImg");
+                left_cards[index].appendChild(img);
+            }
+            
+            img.setAttribute("src", "img/" + imgFileName + ".png");
+        }
+        for(; index < 5; index++)
+        {
+            var img = left_cards[index].children[0];
+            if(img)
+                left_cards[index].removeChild(img);
+        }
+        var topNewCards = playerNodes[topPlayerIndex].getElementsByTagName("handCard");
+        for(index = 0; index < topNewCards.length; index++)
+        {
+            var imgFileName = topNewCards[index].getElementsByTagName("imgFileName")[0].childNodes[0].data;
+            
+            var img = top_cards[index].children[0];
+            if(!img)
+            {
+                img = document.createElement("img");
+                img.setAttribute("class", "cardImg");
+                top_cards[index].appendChild(img);
+            }
+            
+            img.setAttribute("src", "img/" + imgFileName + ".png");
+        }
+        for(; index < 5; index++)
+        {
+            var img = top_cards[index].children[0];
+            if(img)
+                top_cards[index].removeChild(img);
+        }
+        var rightNewCards = playerNodes[rightPlayerIndex].getElementsByTagName("handCard");
+        for(index = 0; index < rightNewCards.length; index++)
+        {
+            var imgFileName = rightNewCards[index].getElementsByTagName("imgFileName")[0].childNodes[0].data;
+            
+            var img = right_cards[index].children[0];
+            if(!img)
+            {
+                img = document.createElement("img");
+                img.setAttribute("class", "cardImg");
+                right_cards[index].appendChild(img);
+            }
+            
+            img.setAttribute("src", "img/" + imgFileName + ".png");
+        }
+        for(; index < 5; index++)
+        {
+            var img = right_cards[index].children[0];
+            if(img)
+                right_cards[index].removeChild(img);
+        }
+        var bottomPlayedCard = playerNodes[yourPlayerIndex].getElementsByTagName("playedCard")[0];
+        var leftPlayedCard = playerNodes[leftPlayerIndex].getElementsByTagName("playedCard")[0];
+        var topPlayedCard = playerNodes[topPlayerIndex].getElementsByTagName("playedCard")[0];
+        var rightPlayedCard = playerNodes[rightPlayerIndex].getElementsByTagName("playedCard")[0];
+        var pickCard = responseXMLRoot.getElementsByTagName("pickCard")[0];
+        if(bottomPlayedCard)
+        {
+            var imgFileName = bottomPlayedCard.getElementsByTagName("imgFileName")[0].childNodes[0].data;
+            
+            var img = bottom_card_played.children[0];
+            if(!img)
+            {
+                img = document.createElement("img");
+                img.setAttribute("class", "cardImg");
+                bottom_card_played.appendChild(img);
+            }
+            
+            img.setAttribute("src", "img/" + imgFileName + ".png");
+        }
+        if(leftPlayedCard)
+        {
+            var imgFileName = leftPlayedCard.getElementsByTagName("imgFileName")[0].childNodes[0].data;
+            
+            var img = left_card_played.children[0];
+            if(!img)
+            {
+                img = document.createElement("img");
+                img.setAttribute("class", "cardImg");
+                left_card_played.appendChild(img);
+            }
+            
+            img.setAttribute("src", "img/" + imgFileName + ".png");
+        }
+        if(topPlayedCard)
+        {
+            var imgFileName = topPlayedCard.getElementsByTagName("imgFileName")[0].childNodes[0].data;
+            
+            var img = top_card_played.children[0];
+            if(!img)
+            {
+                img = document.createElement("img");
+                img.setAttribute("class", "cardImg");
+                top_card_played.appendChild(img);
+            }
+            
+            img.setAttribute("src", "img/" + imgFileName + ".png");
+        }
+        if(rightPlayedCard)
+        {
+            var imgFileName = rightPlayedCard.getElementsByTagName("imgFileName")[0].childNodes[0].data;
+            
+            var img = right_card_played.children[0];
+            if(!img)
+            {
+                img = document.createElement("img");
+                img.setAttribute("class", "cardImg");
+                right_card_played.appendChild(img);
+            }
+            
+            img.setAttribute("src", "img/" + imgFileName + ".png");
+        }
+        if(pickCard)
+        {
+            var imgFileName = pickCard.getElementsByTagName("imgFileName")[0].childNodes[0].data;
+            
+            var img = pickCardNode.children[0];
+            if(!img)
+            {
+                img = document.createElement("img");
+                img.setAttribute("class", "cardImg");
+                pickCardNode.appendChild(img);
+            }
+            
+            img.setAttribute("src", "img/" + imgFileName + ".png");
+        }
         
+        // Main game logic
         if(whoseTurn === yourPlayerNumber)
         {
             switch(phase)
@@ -312,19 +478,21 @@ function updateGameState(connection)
                     // (this should never happen, since the turn is immediately passed on to the next guy when you join)
                     break;
                 case 1: // choosing whether the dealer should pick up the turned-over card
-                    pickUpButtonsSpan.style.display = "inline";
+                    //pickUpButtonsSpan.style.display = "inline";
+                    showPickUp();
 
                     break;
                 case 2: // waiting for the dealer to choose a discard after taking the turned-over card
-                    respondToCardClick = true;
+                    // nothing to do here, just wait for a card to be clicked
 
                     break;
                 case 3: // picking the trump suit (if the dealer didn't pick up)
-                    suitSelectButtonsSpan.style.display = "inline";
+                    //suitSelectButtonsSpan.style.display = "inline";
+                    showPickSuit();
 
                     break;
                 case 4: // during the hand
-                    respondToCardClick = true;
+                    // nothing to do here, just wait for a card to be clicked
 
                     break;
                 case 5: // between tricks (waiting for players to ready up - this is automatically initiated by a JS timer on the client side)
@@ -361,4 +529,24 @@ function updateGameState(connection)
         else
             window.setTimeout(function() { doAjaxRequest("", ""); }, 1500);
     }
+}
+
+function showPickSuit()
+{
+    
+}
+
+function hidePickSuit()
+{
+    
+}
+
+function showPickUp()
+{
+    
+}
+
+function hidePickUp()
+{
+    
 }
