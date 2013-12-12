@@ -202,7 +202,8 @@ public class EuchreController extends HttpServlet {
                         gameState.trumpSuit = gameState.pickCard.getSuit();
                         gameState.whoPickedTrump = gameState.whoseTurn;
                         gameState.whoseTurn = gameState.dealer;
-                        gameState.playerHands.get(gameState.dealer - 1).push(gameState.pickCard);
+                        if(gameState.pickCard != null)
+                            gameState.playerHands.get(gameState.dealer - 1).push(gameState.pickCard);
                         gameState.pickCard = null;
                     }
                     else if(choice.equals("no"))
@@ -220,7 +221,8 @@ public class EuchreController extends HttpServlet {
                             for(int i = 0; i < 4; i++)
                                 gameState.hasPlayed[i] = false;
                             gameState.hasPlayed[gameState.dealer - 1] = true; // dealer does not participate in trump selection phase
-                            gameState.discardPile.push(gameState.pickCard);
+                            if(gameState.pickCard != null)
+                                gameState.discardPile.push(gameState.pickCard);
                             gameState.pickCard = null;
                         }
                     }
@@ -276,7 +278,8 @@ public class EuchreController extends HttpServlet {
                                     gameState.discardPile.push(gameState.playedCards[i]);
                                     gameState.playedCards[i] = null;
                                 }
-                            gameState.discardPile.push(gameState.pickCard);
+                            if(gameState.pickCard != null)
+                                gameState.discardPile.push(gameState.pickCard);
                             gameState.pickCard = null;
                             
                             Collections.shuffle(gameState.discardPile);
@@ -376,12 +379,12 @@ public class EuchreController extends HttpServlet {
                             return;
                         }
 
-                        // Discard the selected card, and put the pick card in its place in the dealer's hand
+                        // Discard the selected card (the pick card has already been added to the dealer's hand)
                         gameState.discardPile.push(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToDiscard));
                         //gameState.playerHands.get(gameState.whoseTurn - 1).set(indexToDiscard, gameState.pickCard);
                         gameState.playerHands.get(gameState.whoseTurn - 1).remove(indexToDiscard);
-                        gameState.discardPile.push(gameState.pickCard);
-                        gameState.pickCard = null;
+                        //gameState.discardPile.push(gameState.pickCard);
+                        //gameState.pickCard = null;
 
                         // Proceed to phase 4 (trump suit has already been picked, so skip phase 3)
                         gameState.phase = 4;
@@ -556,7 +559,8 @@ public class EuchreController extends HttpServlet {
                                             gameState.discardPile.push(gameState.playedCards[i]);
                                             gameState.playedCards[i] = null;
                                         }
-                                    gameState.discardPile.push(gameState.pickCard);
+                                    if(gameState.pickCard != null)
+                                        gameState.discardPile.push(gameState.pickCard);
                                     gameState.pickCard = null;
 
                                     Collections.shuffle(gameState.discardPile);
@@ -591,7 +595,8 @@ public class EuchreController extends HttpServlet {
                                         gameState.discardPile.push(gameState.playedCards[i]);
                                         gameState.playedCards[i] = null;
                                     }
-                                gameState.discardPile.push(gameState.pickCard);
+                                if(gameState.pickCard != null)
+                                    gameState.discardPile.push(gameState.pickCard);
                                 gameState.pickCard = null;
 
                                 Collections.shuffle(gameState.discardPile);

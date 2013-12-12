@@ -38,6 +38,7 @@ var topBottomTrumpInd;
 var leftRightTrumpInd;
 
 var whoseTurnInd;
+var discardInd;
 var infoNode;
 
 // DEBUG
@@ -47,6 +48,10 @@ var globalResponseXML;
 // by comparing them with the latest ones sent by the server.
 var whoseTurn; // 1, 2, 3, or 4
 var dealer;
+var previousTopBottomTricks;
+var previousLeftRightTricks;
+var previousTopBottomScore;
+var previousLeftRightScore;
 
 function init()
 {
@@ -114,9 +119,14 @@ function init()
     leftRightTrumpInd = document.getElementById("team2TrumpInd");
     
     whoseTurnInd = document.getElementById("whoseTurn");
+    discardInd = document.getElementById("discardInd");
     infoNode = document.getElementById("info");
     
     // init value globals
+    previousTopBottomTricks = 0;
+    previousLeftRightTricks = 0;
+    previousTopBottomScore = 0;
+    previousLeftRightScore = 0;
     
     doAjaxRequest("", "");
 }
@@ -236,7 +246,15 @@ function updateGameState(connection)
             whoseTurn = 2;
         else if(playerNodes[3].getElementsByTagName("hasTurn")[0])
             whoseTurn = 4;
-        whoseTurnInd.childNodes[0].data = "Player " + whoseTurn;
+        //whoseTurnInd.childNodes[0].data = "Player " + whoseTurn;
+        if(yourPlayerNumber === whoseTurn)
+            whoseTurnInd.childNodes[0].data = yourName;
+        else if(leftPlayerNumber === whoseTurn)
+            whoseTurnInd.childNodes[0].data = leftPlayerName;
+        else if(topPlayerNumber === whoseTurn)
+            whoseTurnInd.childNodes[0].data = topPlayerName;
+        else if(rightPlayerNumber === whoseTurn)
+            whoseTurnInd.childNodes[0].data = rightPlayerName;
         
         if(playerNodes[0].getElementsByTagName("dealer")[0])
             dealer = 1;
@@ -252,9 +270,9 @@ function updateGameState(connection)
         topDealerInd.style.display = "none";
         rightDealerInd.style.display = "none";
         
-        console.log("dealer is" + dealer);
-            console.log("you are player " + yourPlayerNumber);
-            console.log("turn is" + whoseTurn);
+        //console.log("dealer is" + dealer);
+        //console.log("you are player " + yourPlayerNumber);
+        //console.log("turn is" + whoseTurn);
         
         if(yourPlayerNumber === dealer)
             bottomDealerInd.style.display = "block";
@@ -270,6 +288,8 @@ function updateGameState(connection)
         hidePickSuit();
         //pickUpButtonsSpan.style.display = "none";
         hidePickUp();
+        showTurn();
+        discardInd.style.display = "none";
         
         // Update scores and # of tricks taken
         var team1Score = Number(teamNodes[0].getElementsByTagName("score")[0].childNodes[0].data);
@@ -300,7 +320,7 @@ function updateGameState(connection)
         topBottomTricksInd.childNodes[0].data = "Tricks: " + topBottomTricks;
         leftRightTricksInd.childNodes[0].data = "Tricks: " + leftRightTricks;
         
-        // TODO: display current cards on screen and update trump indicators
+        // display current cards on screen
         var bottomNewCards = playerNodes[yourPlayerIndex].getElementsByTagName("handCard");
         var index;
         for(var index = 0; index < bottomNewCards.length; index++)
@@ -504,6 +524,60 @@ function updateGameState(connection)
                 pickCardNode.removeChild(img);
         }
         
+        // update trump indicators
+        var team1Trump = teamNodes[0].getElementsByTagName("trump")[0];
+        var team2Trump = teamNodes[1].getElementsByTagName("trump")[0];
+        if(team1Trump)
+        {
+            var team1TrumpSuit = team1Trump.childNodes[0].data;
+            if(yourTeamNum === 1)
+            {
+                topBottomTrumpYes.style.display = "block";
+                topBottomTrumpInd.style.display = "block";
+                topBottomTrumpInd.childNodes[0].data = team1TrumpSuit;
+                leftRightTrumpYes.style.display = "none";
+                leftRightTrumpInd.style.display = "none";
+            }
+            else
+            {
+                topBottomTrumpYes.style.display = "none";
+                topBottomTrumpInd.style.display = "none";
+                leftRightTrumpInd.childNodes[0].data = team1TrumpSuit;
+                leftRightTrumpYes.style.display = "block";
+                leftRightTrumpInd.style.display = "block";
+            }
+        }
+        else if(team2Trump)
+        {
+            var team2TrumpSuit = team2Trump.childNodes[0].data;
+            if(yourTeamNum === 2)
+            {
+                topBottomTrumpYes.style.display = "block";
+                topBottomTrumpInd.style.display = "block";
+                topBottomTrumpInd.childNodes[0].data = team2TrumpSuit;
+                leftRightTrumpYes.style.display = "none";
+                leftRightTrumpInd.style.display = "none";
+            }
+            else
+            {
+                topBottomTrumpYes.style.display = "none";
+                topBottomTrumpInd.style.display = "none";
+                leftRightTrumpInd.childNodes[0].data = team2TrumpSuit;
+                leftRightTrumpYes.style.display = "block";
+                leftRightTrumpInd.style.display = "block";
+            }
+        }
+        
+        if(phase === 0 || phase === 5 || phase === 6)
+            hideTurn();
+        if(phase === 0 || phase === 5 || phase === 6 || phase === 1 || phase === 3)
+        {
+            topBottomTrumpYes.style.display = "none";
+            topBottomTrumpInd.style.display = "none";
+            leftRightTrumpYes.style.display = "none";
+            leftRightTrumpInd.style.display = "none";
+        }
+        
         // Main game logic
         if(whoseTurn === yourPlayerNumber)
         {
@@ -511,8 +585,9 @@ function updateGameState(connection)
             {
                 case 0: // waiting for players to join the game
                     // Set a 1.5-second AJAX request timer to refresh and see if anyone's joined
-                    window.setTimeout(function() { doAjaxRequest("", ""); }, 1500);
                     // (this should never happen, since the turn is immediately passed on to the next guy when you join)
+                    window.setTimeout(function() { doAjaxRequest("", ""); }, 1500);
+                    
                     break;
                 case 1: // choosing whether the dealer should pick up the turned-over card
                     //pickUpButtonsSpan.style.display = "inline";
@@ -520,7 +595,7 @@ function updateGameState(connection)
 
                     break;
                 case 2: // waiting for the dealer to choose a discard after taking the turned-over card
-                    // nothing to do here, just wait for a card to be clicked
+                    discardInd.style.display = "block";
 
                     break;
                 case 3: // picking the trump suit (if the dealer didn't pick up)
@@ -534,25 +609,36 @@ function updateGameState(connection)
                     break;
                 case 5: // between tricks (waiting for players to ready up - this is automatically initiated by a JS timer on the client side)
                     window.setTimeout(function() { doAjaxRequest("readyUp", ""); }, 1500);
+                    
+                    var resultInfoDiv = document.createElement("div");
+                    if(topBottomTricks > previousTopBottomTricks)
+                        resultInfoDiv.appendChild(document.createTextNode("Your team won the trick! Get ready for the next one..."));
+                    else if(leftRightTricks > previousLeftRightTricks)
+                        resultInfoDiv.appendChild(document.createTextNode("The other team won the trick. Get ready for the next one..."));
+                    previousTopBottomTricks = topBottomTricks;
+                    previousLeftRightTricks = leftRightTricks;
+                    infoNode.appendChild(resultInfoDiv);
 
                     break;
                 case 6: // between hands (waiting for players to ready up - they need to click a button)
                     readyButtonSpan.style.display = "inline";
+                    
+                    var resultInfoDiv = document.createElement("div");
+                    if(topBottomScore > previousTopBottomScore)
+                        resultInfoDiv.appendChild(document.createTextNode("Your team won the hand! Get ready for the next one..."));
+                    else if(leftRightScore > previousLeftRightScore)
+                        resultInfoDiv.appendChild(document.createTextNode("The other team won the hand. Get ready for the next one..."));
+                    previousTopBottomScore = topBottomScore;
+                    previousLeftRightScore = leftRightScore;
+                    infoNode.appendChild(resultInfoDiv);
 
                     break;
                 case 7: // game over
                     var resultInfoDiv = document.createElement("div");
                     if(topBottomScore > leftRightScore)
-                        resultInfoDiv.appendChild(document.createTextNode("Game over - team " + yourTeamNum + " wins!"));
+                        resultInfoDiv.appendChild(document.createTextNode("Game over - your team won!"));
                     else
-                    {
-                        var otherTeam;
-                        if(yourTeamNum === 1)
-                            otherTeam = 2;
-                        else
-                            otherTeam = 1;
-                        resultInfoDiv.appendChild(document.createTextNode("Game over - team " + otherTeam + " wins."));
-                    }
+                        resultInfoDiv.appendChild(document.createTextNode("Game over - the other team won."));
                     infoNode.appendChild(resultInfoDiv);
                     resultInfoDiv = document.createElement("div")
                     var linkNode = document.createElement("a");
@@ -570,20 +656,54 @@ function updateGameState(connection)
 
 function showPickSuit()
 {
-    
+    for(var i = 0; i < 5; i++)
+    {
+        var node = document.getElementById("pickSuitButton" + i);
+        node.style.display = "block";
+    }
 }
 
 function hidePickSuit()
 {
-    
+    for(var i = 0; i < 5; i++)
+    {
+        var node = document.getElementById("pickSuitButton" + i);
+        node.style.display = "none";
+    }
 }
 
 function showPickUp()
 {
-    
+    for(var i = 0; i < 3; i++)
+    {
+        var node = document.getElementById("pickUp" + i);
+        node.style.display = "block";
+    }
 }
 
 function hidePickUp()
 {
-    
+    for(var i = 0; i < 3; i++)
+    {
+        var node = document.getElementById("pickUp" + i);
+        node.style.display = "none";
+    }
+}
+
+function showTurn()
+{
+    for(var i = 0; i < 2; i++)
+    {
+        var node = document.getElementById("turn" + i);
+        node.style.display = "block";
+    }
+}
+
+function hideTurn()
+{
+    for(var i = 0; i < 2; i++)
+    {
+        var node = document.getElementById("turn" + i);
+        node.style.display = "none";
+    }
 }

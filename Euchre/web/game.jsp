@@ -16,7 +16,7 @@
 		<style type="text/css">
 		body	{ font-family: "Arial",sans-serif; background-color: seashell }
                 .title  { font-size: 16pt; font-weight: bold }
-                .info   { color: green; font-size: 16pt; font-weight: bold }
+                .info   { color: green; font-size: 12pt; font-weight: bold }
 		
 		td  {vertical-align:bottom; text-align:center}
 		div.box
@@ -176,7 +176,7 @@
 			<td><div class="boxB" id="left_cardplayed"></div></td><!-- card P2 played -->
 			<td><div class="boxQ" id="pickCard"></div></td><!-- card that can be picked up to declare trump-->
 			<td><div class="boxB" id="right_cardplayed"></div></td><!-- card P4 played -->
-			<td><div class="boxBlank"><span id="42"><button type="button" onclick="doAjaxRequest('readyUp', '');">Ready</button></span> </div></td><!-- ready up button -->
+			<td><div class="boxBlank"><span id="42"><button type="button" onclick="doAjaxRequest('readyUp', '');">Click when ready</button></span> </div></td><!-- ready up button -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxB" id="right_card3"></div></td><!--P4's card -->
 		</tr>
@@ -189,7 +189,7 @@
 			<td><div class="boxR" id="bottom_cardplayed"></div></td><!-- card P1 played -->
 			<td><div class="boxBlank"> </div></td>
 			<td><div class="boxBlank"> </div></td>
-			<td><div class="boxBlank"> </div></td>
+			<td><div class="boxBlank" id="discardInd">Discard:</div></td>
 			<td><div class="boxB" id="right_card4"></div></td><!--P4's card -->
 		</tr>
 		<tr>
@@ -209,11 +209,11 @@
 			<td><div class="boxBlank2"> </div></td>
 			<td><div class="boxBlank2"> </div></td><!--these buttons all need an onclick function -->
 			<!--<span id = "41">                      <!--titles on buttons subject to change -->
-				<td><div class="boxBlank2" class="pickSuit" ><button type="button" onclick="doAjaxRequest('pickTrump', 'hearts');">Hearts</button></div></td>
-				<td><div class="boxBlank2" class="pickSuit" ><button type="button" onclick="doAjaxRequest('pickTrump', 'spades');">Spades</button> </div></td>
-				<td><div class="boxBlank2" class="pickSuit" ><button type="button" onclick="doAjaxRequest('pickTrump', 'clubs');">Clubs</button> </div></td>
-                                <td><div class="boxBlank2" class="pickSuit" ><button type="button" onclick="doAjaxRequest('pickTrump', 'diamonds');">Diamonds</button> </div></td>
-                                <td><div class="boxBlank2" class="pickSuit" ><button type="button" onclick="doAjaxRequest('pickTrump', 'pass');">Pass</button> </div></td>
+				<td><div class="boxBlank2" id="pickSuitButton0" ><button type="button" onclick="doAjaxRequest('pickTrump', 'hearts');">Hearts</button></div></td>
+				<td><div class="boxBlank2" id="pickSuitButton1" ><button type="button" onclick="doAjaxRequest('pickTrump', 'spades');">Spades</button> </div></td>
+				<td><div class="boxBlank2" id="pickSuitButton2" ><button type="button" onclick="doAjaxRequest('pickTrump', 'clubs');">Clubs</button> </div></td>
+                                <td><div class="boxBlank2" id="pickSuitButton3" ><button type="button" onclick="doAjaxRequest('pickTrump', 'diamonds');">Diamonds</button> </div></td>
+                                <td><div class="boxBlank2" id="pickSuitButton4" ><button type="button" onclick="doAjaxRequest('pickTrump', 'pass');">Pass</button> </div></td>
 			<!--</span> -->
 		</tr>
                 <tr>
@@ -222,9 +222,9 @@
 			<td><div class="boxBlank2"> </div></td>
 			<td><div class="boxBlank2"> </div></td><!--these buttons all need an onclick function -->
 			<!--<span id = "pickUpButtons">                      <!--titles on buttons subject to change -->
-				<td><div class="boxBlank2" class="pickUp" >Pick up?</div></td>
-				<td><div class="boxBlank2" class="pickUp" ><button type="button" onclick="doAjaxRequest('pickUp', 'yes');">Yes</button> </div></td>
-				<td><div class="boxBlank2" class="pickUp" ><button type="button" onclick="doAjaxRequest('pickUp', 'no');">No</button> </div></td>
+				<td><div class="boxBlank2" id="pickUp0" >Pick up?</div></td>
+				<td><div class="boxBlank2" id="pickUp1" ><button type="button" onclick="doAjaxRequest('pickUp', 'yes');">Yes</button> </div></td>
+				<td><div class="boxBlank2" id="pickUp2" ><button type="button" onclick="doAjaxRequest('pickUp', 'no');">No</button> </div></td>
 			<!--</span> -->
                 </tr>
                 <tr>
@@ -233,8 +233,8 @@
 			<td><div class="boxBlank2"> </div></td>
 			<td><div class="boxBlank2"> </div></td>
 			<!--<span id = "whoseTurnDisplay"> -->
-                            <td><div class="boxBlank2" ><strong>Turn:</strong></div></td>
-                            <td><div class="boxBlank2" ><strong><span id="whoseTurn">x</span></strong></div></td>
+                            <td><div class="boxBlank2" id="turn0"><strong>Turn:</strong></div></td>
+                            <td><div class="boxBlank2" id="turn1"><strong><span id="whoseTurn">x</span></strong></div></td>
 			<!--</span> -->
                 </tr>
 	</table>
