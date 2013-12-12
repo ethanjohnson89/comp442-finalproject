@@ -8,7 +8,8 @@
 %><%@page contentType="application/xml" pageEncoding="UTF-8"
 %><?xml version="1.0" encoding="utf-8"?>
 <% GameState gameState = (GameState)getServletContext().getAttribute("gameState");
-   Integer playerNumber = (Integer)session.getAttribute("playerNumber"); %>
+   Integer playerNumber = (Integer)session.getAttribute("playerNumber");
+   if(gameState != null) { %>
 <table>
     <team>
         <teamNum>1</teamNum>
@@ -40,6 +41,7 @@
             <handCard>
                 <% if(playerNumber == p+1) { %>
                 <overturned>true</overturned>
+                <% gameState.playerHands.get(p).get(i).getFaceValue(); %> <!-- debug -->
                 <faceValue><%= gameState.playerHands.get(p).get(i).getFaceValue() %></faceValue>
                 <suit><%= gameState.playerHands.get(p).get(i).getSuit() %></suit>
                 <imgFileName><%= gameState.playerHands.get(p).get(i).getImgFileName() %></imgFileName>
@@ -90,6 +92,7 @@
             <handCard>
                 <% if(playerNumber == p+1) { %>
                 <overturned>true</overturned>
+                <% gameState.playerHands.get(p).get(i).getFaceValue(); %> <!-- debug -->
                 <faceValue><%= gameState.playerHands.get(p).get(i).getFaceValue() %></faceValue>
                 <suit><%= gameState.playerHands.get(p).get(i).getSuit() %></suit>
                 <imgFileName><%= gameState.playerHands.get(p).get(i).getImgFileName() %></imgFileName>
@@ -119,5 +122,7 @@
         <suit><%= gameState.pickCard.getSuit() %></suit>
         <imgFileName><%= gameState.pickCard.getImgFileName() %></imgFileName>
     </pickCard>
+    <% } } else { %>
+    <error>gameStateIsNull</error>
     <% } %>
 </table>

@@ -380,6 +380,7 @@ public class EuchreController extends HttpServlet {
                         gameState.discardPile.push(gameState.playerHands.get(gameState.whoseTurn - 1).get(indexToDiscard));
                         //gameState.playerHands.get(gameState.whoseTurn - 1).set(indexToDiscard, gameState.pickCard);
                         gameState.playerHands.get(gameState.whoseTurn - 1).remove(indexToDiscard);
+                        gameState.discardPile.push(gameState.pickCard);
                         gameState.pickCard = null;
 
                         // Proceed to phase 4 (trump suit has already been picked, so skip phase 3)
@@ -619,7 +620,7 @@ public class EuchreController extends HttpServlet {
                             gameState.whoseTurn = 1;
                         if(gameState.isReady[gameState.whoseTurn - 1]) // we've gone around the whole circle - continue to next trick (we've already shuffled and re-dealt above)
                         {
-                            gameState.phase = 4;
+                            gameState.phase = 1;
                             gameState.whoseTurn = gameState.dealer + 1;
                             if(gameState.whoseTurn > 4)
                                 gameState.whoseTurn = 1;
@@ -633,7 +634,7 @@ public class EuchreController extends HttpServlet {
                             gameState.whoseTurn = 1;
                         if(gameState.isReady[gameState.whoseTurn - 1]) // we've gone around the whole circle - continue to the next hand (we've already shuffled and re-dealt above)
                         {
-                            gameState.phase = 4;
+                            gameState.phase = 1;
                             gameState.whoseTurn = gameState.dealer + 1;
                             if(gameState.whoseTurn > 4)
                                 gameState.whoseTurn = 1;
